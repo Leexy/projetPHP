@@ -1,0 +1,17 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Home – {{ parent() }}{% endblock %}
+
+{% block content %}
+  <p>
+    Hello! You are logged in as {{ user.getEmail() }}.
+  </p>
+  <ul>
+  	<li>
+  		<a href="/games">Game list</a>
+  	</li>
+  </ul>
+  <p>
+    <a href="{{ urlFor('logout.process') }}">Log out</a>.
+  </p>
+{% endblock %}
