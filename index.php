@@ -38,7 +38,7 @@ $app->post('/games', function () use($app) {
   $gameRepository = new GameRepository($app->dbh);
   try {
     $gameId = $gameRepository->createFor($app->user);
-    $app->redirect($app->urlFor('game'), $gameId);
+    $app->redirect($app->urlFor('game'), ['id' => $gameId]);
   } catch (\Repository\Error\GameCreationLimit $error) {
     $app->flash('error', "Heyy! You already have a game awaiting! Please be patient. :)");
     $app->render('games.html.twig', ['games' => $gameRepository->fetchWaiting()]);
