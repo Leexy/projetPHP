@@ -2,6 +2,14 @@
 
 {% block title %}{{ parent() }} — Game{% endblock %}
 
+{% block js %}
+{{ parent() }}
+<script>
+var gameStateUrl = {{ urlFor('game.state', { "id": game.id })|json_encode|raw }};
+</script>
+<script src="/assets/js/game.js"></script>
+{% endblock %}
+
 {% block content %}
   <p>
     Hello! You are logged in as {{ user.getEmail() }}. <a href="{{ urlFor('logout.process') }}">Log out</a>.

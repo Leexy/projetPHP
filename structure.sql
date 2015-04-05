@@ -15,12 +15,14 @@ CREATE TABLE games (
     user1_id INTEGER NOT NULL,
     user2_id INTEGER,
     state VARCHAR(75) NOT NULL,
+    playing_user_id INTEGER,
     winner_id INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY(id),
     FOREIGN KEY (user1_id) REFERENCES users(id),
     FOREIGN KEY (user2_id) REFERENCES users(id),
+    FOREIGN KEY (playing_user_id) REFERENCES users(id)
     FOREIGN KEY (winner_id) REFERENCES users(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 

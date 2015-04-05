@@ -9,11 +9,28 @@ use Repository\UserRepository;
 use Entity\User;
 use Service\User\Signup;
 
+$app->get('/games/:id/state', function ($gameId) use($app) {
+  $app->response->headers->set('Content-Type', 'application/json');
+  $user = $app->user;
+  $gameRepository = new GameRepository($app->dbh);
+  $game = $gameRepository->fetchById($gameId);
+  if (!$game->isPlaying($user)) {
+    $app->redirect($app->urlFor('games.list'));
+  }
+  $response = ['state' => $game->getState()];
+  if ($game->getState() === Game::STATE_PLAYING) {
+    $response['play'] = $game->isPlayerTurn($user);
+  }
+
+  $app->response->setBody(json_encode($response));
+})->name('game.state');
+
+
 $app->get('/games/:id', function ($gameId) use($app) {
   $user = $app->user;
   $gameRepository = new GameRepository($app->dbh);
   $game = $gameRepository->fetchById($gameId);
-  if (!in_array($user->getId(), [$game->getUser1Id(), $game->getUser2Id()], true)) {
+  if (!$game->isPlaying($user)) {
     if ($game->getUser2Id()) {
       $app->redirect($app->urlFor('games.list'));
     } else {

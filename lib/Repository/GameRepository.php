@@ -19,7 +19,7 @@ VALUES(:user1_id, :state);
 SQL;
 
   private static $TRY_TO_ADD_USER_QUERY = <<<'SQL'
-UPDATE games SET user2_id = :user2_id, state = :state
+UPDATE games SET user2_id = :user2_id, state = :state, playing_user_id = user1_id
 WHERE id = :game_id
 AND user2_id IS NULL;
 SQL;
