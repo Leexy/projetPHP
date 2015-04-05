@@ -1,6 +1,8 @@
 jQuery(function () {
   'use strict';
 
+  var POLLING_PERIOD = 2500;//ms
+
   waitForPlayingState(function (error, game) {
     if (game.play) {
       console.log('This is my turn!');
@@ -14,7 +16,7 @@ jQuery(function () {
   function waitForMyTurn(fn) {
     $.get(GAME_STATE_URL, function (game) {
       if (!game.play) {
-        setTimeout(waitForMyTurn.bind(null, fn), 1000);
+        setTimeout(waitForMyTurn.bind(null, fn), POLLING_PERIOD);
       } else {
         fn(null, game);
       }
@@ -24,7 +26,7 @@ jQuery(function () {
   function waitForPlayingState(fn) {
     $.get(GAME_STATE_URL, function (game) {
       if (game.state === GAME_STATE.WAITING) {
-        setTimeout(waitForPlayingState.bind(null, fn), 1000);
+        setTimeout(waitForPlayingState.bind(null, fn), POLLING_PERIOD);
       } else {
         fn(null, game);
       }
