@@ -5,7 +5,8 @@
 {% block js %}
 {{ parent() }}
 <script>
-var gameStateUrl = {{ urlFor('game.state', { "id": game.id })|json_encode|raw }};
+var GAME_STATE_URL = {{ urlFor('game.state', { "id": game.id })|json_encode|raw }};
+var GAME_STATE = {{ states|json_encode|raw }};
 </script>
 <script src="/assets/js/game.js"></script>
 {% endblock %}

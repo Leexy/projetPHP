@@ -42,7 +42,10 @@ $app->get('/games/:id', function ($gameId) use($app) {
       }
     }
   }
-  $app->render('game.html.twig', ['game' => $game]);
+  $app->render('game.html.twig', [
+    'game' => $game,
+    'states' => ['WAITING' => Game::STATE_WAITING, 'PLAYING' => Game::STATE_PLAYING],
+  ]);
 })->name('game');
 
 $app->get('/games', function () use($app) {
