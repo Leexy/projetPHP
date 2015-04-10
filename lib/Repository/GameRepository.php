@@ -40,15 +40,36 @@ SELECT * FROM games
 WHERE id = :id;
 SQL;
 
+  private static $SWITCH_PLAYING_USER_QUERY = <<<'SQL'
+UPDATE games
+SET playing_user_id = IF(playing_user_id = user1_id, user2_id, user1_id)
+WHERE id = :game_id;
+SQL;
+
   public function tryToAddUser(User $user, Game $game)
   {
-    $stmt = $this->dbh->prepare(static::$TRY_TO_ADD_USER_QUERY);
-    $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
-    $stmt->bindValue('user2_id', $user->getId(), PDO::PARAM_INT);
-    $stmt->bindValue('state', Game::STATE_PLAYING, PDO::PARAM_STR);
-    $affectedRows = $stmt->execute();
-    if (!$affectedRows) {
-      throw new FullGame();
+    try {
+      $stmt = $this->dbh->prepare(static::$TRY_TO_ADD_USER_QUERY);
+      $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      $stmt->bindValue('user2_id', $user->getId(), PDO::PARAM_INT);
+      $stmt->bindValue('state', Game::STATE_PLAYING, PDO::PARAM_STR);
+      $affectedRows = $stmt->execute();
+      if (!$affectedRows) {
+        throw new FullGame();
+      }
+    } catch (PDOException $error) {
+      RepositoryError::wrap($error);
+    }
+  }
+
+  public function switchPlayingUser(Game $game)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$SWITCH_PLAYING_USER_QUERY);
+      $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+    } catch (PDOException $error) {
+      RepositoryError::wrap($error);
     }
   }
 
@@ -60,7 +81,7 @@ SQL;
       $stmt->execute();
       return new Game($stmt->fetch());
     } catch (PDOException $error) {
-      
+      RepositoryError::wrap($error);
     }
   }
 

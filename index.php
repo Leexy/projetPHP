@@ -9,6 +9,40 @@ use Repository\UserRepository;
 use Entity\User;
 use Service\User\Signup;
 
+use Repository\ShipRepository;
+use Entity\Ship;
+
+use Repository\HitRepository;
+use Entity\Hit;
+
+$app->post('/games/:id/hits', function ($gameId) use($app) {
+  $app->response->headers->set('Content-Type', 'application/json');
+  $hitData = json_decode($app->request->getBody(), true);
+  $user = $app->user;
+  $gameRepository = new GameRepository($app->dbh);
+  $game = $gameRepository->fetchById($gameId);
+  if (!$game->isPlayerTurn($user)) {
+    $app->halt(403);
+  }
+  $hitRepository = new HitRepository($app->dbh);
+  $hit = $hitRepository->create($hitData["x"], $hitData["y"], $game, $user);
+  $success = false;
+  $userRepository = new UserRepository($app->dbh);
+  $opponent = $userRepository->fetchById($user->getId() === $game->getUser1Id()?
+    $game->getUser2Id():
+    $game->getUser1Id()
+  );
+  $shipRepository = new ShipRepository($app->dbh);
+  foreach ($shipRepository->fetchForUserInGame($opponent, $game) as $ship) {
+    if ($ship->isHitBy($hit)) {
+      $success = true;
+      break;
+    }
+  }
+  $gameRepository->switchPlayingUser($game);
+  $app->response->setBody(json_encode(array_merge(['success' => $success], $hit->getPosition())));
+})->name('game.hit');
+
 $app->get('/games/:id/state', function ($gameId) use($app) {
   $app->response->headers->set('Content-Type', 'application/json');
   $user = $app->user;

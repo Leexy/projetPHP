@@ -6,6 +6,8 @@ use PDOException;
 use Repository\Error\Base as RepositoryError;
 use Repository\Error\DuplicatedKey;
 
+use Entity\User;
+
 class UserRepository extends Base
 {
   private static $DUPLICATION_CODE = '23000';
@@ -13,6 +15,10 @@ class UserRepository extends Base
   private static $CREATION_QUERY = <<<'SQL'
 INSERT INTO users(email, password)
 VALUES(:email, :password);
+SQL;
+
+  private static $FETCH_BY_ID_QUERY = <<<'SQL'
+SELECT * FROM users WHERE id = :user_id;
 SQL;
 
   public function create($email, $password)
@@ -28,6 +34,18 @@ SQL;
       } else {
         throw RepositoryError::wrap($error);
       }
+    }
+  }
+
+  public function fetchById($userId)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_BY_ID_QUERY);
+      $stmt->bindValue('user_id', $userId, PDO::PARAM_INT);
+      $stmt->execute();
+      return new User($stmt->fetch());
+    } catch (PDOException $error) {
+      RepositoryError::wrap($error);
     }
   }
 
