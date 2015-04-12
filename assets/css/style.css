@@ -112,6 +112,22 @@ a:hover {
 	border-radius: 10px;
 }
 
+#menu-wrapper p {
+	float: right;
+	color: #FFFFFF;	
+	line-height: 50px;
+  	margin-right: 10px;
+  	font-family: 'Abel', sans-serif;
+	font-size: 15px;
+	font-weight: normal;
+	color: #FFFFFF;
+}
+
+#menu-wrapper a {
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
 #menu {
 	margin: 0;
 	padding: 0px 20px;
@@ -162,7 +178,6 @@ a:hover {
 	background: #378C32;
 	color: #FFFFFF;
 }
-
 /* Page */
 
 #page {

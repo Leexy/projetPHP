@@ -12,9 +12,6 @@ var GAME_STATE = {{ states|json_encode|raw }};
 {% endblock %}
 
 {% block content %}
-  <p>
-    Hello! You are logged in as {{ user.getEmail() }}. <a href="{{ urlFor('logout.process') }}">Log out</a>.
-  </p>
   <div id="game">
     <ul>
       <li>{{ game.id }}</li>
