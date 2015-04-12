@@ -3,7 +3,7 @@ jQuery(function () {
 
   var POLLING_PERIOD = 2500;//ms
 
-  waitForPlayingState(function (error, game) {
+  waitForGameState(GAME_STATE.PLAYING, function (error, game) {
     if (game.play) {
       console.log('This is my turn!');
     } else {
@@ -13,23 +13,15 @@ jQuery(function () {
     }
   });
 
-  function waitForMyTurn(fn) {
-    $.get(GAME_STATE_URL, function (game) {
-      if (!game.play) {
-        setTimeout(waitForMyTurn.bind(null, fn), POLLING_PERIOD);
-      } else {
-        fn(null, game);
-      }
-    });
+  function waitForMyTurn(callback) {
+    Polling.fetch({ url: GAME_STATE_URL }, function (game) {
+      return game.play;
+    }, callback);
   }
 
-  function waitForPlayingState(fn) {
-    $.get(GAME_STATE_URL, function (game) {
-      if (game.state === GAME_STATE.WAITING) {
-        setTimeout(waitForPlayingState.bind(null, fn), POLLING_PERIOD);
-      } else {
-        fn(null, game);
-      }
-    });
+  function waitForGameState(state, callback) {
+    Polling.fetch({ url: GAME_STATE_URL }, function (game) {
+      return game.state === state;
+    }, callback);
   }
 });
