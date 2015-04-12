@@ -5,7 +5,9 @@ namespace Entity;
 class Game extends Base
 {
   const STATE_WAITING = 'waiting';
+  const STATE_PLACING = 'placing';
   const STATE_PLAYING = 'playing';
+  const STATE_FINISHED = 'finished';
 
   public function isPlaying(User $user)
   {
