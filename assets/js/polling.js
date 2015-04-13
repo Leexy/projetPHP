@@ -5,7 +5,8 @@ jQuery(function () {
     fetch: polling,
     period: 2500//ms
   };
-
+  /* Execute callback once the specify hasResult function returns true,
+   fetching data from endpoint periodically */
   function polling(endpoint, hasResult, callback) {
     var pollingArgs = arguments;
     var request = $.ajax(endpoint);
@@ -20,7 +21,7 @@ jQuery(function () {
       retryWith(pollingArgs);
     });
   }
-
+  /* Retry the polling function every Polling.period ms */
   function retryWith(pollingArgs) {
     setTimeout(function () {
       polling(pollingArgs[0], pollingArgs[1], pollingArgs[2]);
