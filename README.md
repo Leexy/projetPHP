@@ -1,6 +1,6 @@
 # Battleship game with PHP Slim
 
-Check [the wiki](https://github.com/Leexy/projetPHP/wiki/Create-table) to create the Database.
+Use **structure.sql** to create the Database.
 
 ## Installation
 
