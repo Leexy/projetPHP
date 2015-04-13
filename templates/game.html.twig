@@ -1,5 +1,8 @@
 {% extends 'layout.html.twig' %}
-
+{% block css %}
+{{ parent() }}
+    <link href="/assets/css/canvasStyle.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
 {% block title %}{{ parent() }} — Game{% endblock %}
 
 {% block js %}
@@ -18,4 +21,6 @@ var GAME_STATE = {{ states|json_encode|raw }};
       <li>{{ game.id }}</li>
     </ul>
   </div>
+  <canvas id="cvsPlayer"></canvas>
+  <canvas id="cvsEnemy"></canvas>
 {% endblock %}
