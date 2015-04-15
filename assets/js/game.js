@@ -2,6 +2,80 @@ jQuery(function () {
   'use strict';
 
   var POLLING_PERIOD = 2500;//ms
+  var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
+  var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
+  var boats = [
+    {
+      name: "submarine",
+      x: 5,
+      y: 420,
+      width: 79,
+      height: 39,
+    },
+    {
+      name: "submarine",
+      x: 95,
+      y: 420,
+      width: 79,
+      height: 39,
+    },
+    {
+      name: "submarine",
+      x: 185,
+      y: 420,
+      width: 79,
+      height: 39,
+    },
+    {
+      name: "submarine",
+      x: 275,
+      y: 420,
+      width: 79,
+      height: 39,
+    },
+    {
+      name: "destroyer",
+      x: 5,
+      y: 470,
+      width: 119,
+      height: 39,
+    },
+    {
+      name: "destroyer",
+      x: 135,
+      y: 470,
+      width: 119,
+      height: 39,
+    },
+    {
+      name: "destroyer",
+      x: 265,
+      y: 470,
+      width: 119,
+      height: 39,
+    },
+    {
+      name: "cruiser",
+      x: 5,
+      y: 520,
+      width: 159,
+      height: 39,
+    },
+    {
+      name: "cruiser",
+      x: 175,
+      y: 520,
+      width: 159,
+      height: 39,
+    },
+    {
+      name: "battleship",
+      x: 5,
+      y: 570,
+      width: 199,
+      height: 39,
+    },
+  ];
 
   waitForGameState(GAME_STATE.PLAYING, function (error, game) {
     if (game.play) {
@@ -35,8 +109,10 @@ jQuery(function () {
     //size of canvas
     var cw = gridWidth + (p*2) + 1;
     var ch = gridHeight + (p*2) + 201;
-    var canvas = $('#cvsPlayer').attr({width: cw, height: ch});
-    drawGrid(canvas,gridWidth,gridHeight,p);
+    $('#cvsPlayer').attr("width", cw);
+    $('#cvsPlayer').attr("height", ch);
+    drawGrid(ctxPlayer,gridWidth,gridHeight,p);
+    drawBoats();
   }
   /* init enemy's canvas*/
   function initEnemyGrid(){
@@ -48,12 +124,12 @@ jQuery(function () {
     //size of canvas
     var cw = gridWidth + (p*2) + 1;
     var ch = gridHeight + (p*2) + 1;
-    var canvas = $('#cvsEnemy').attr({width: cw, height: ch});
-    drawGrid(canvas,gridWidth,gridHeight,p);  
+    $('#cvsEnemy').attr("width", cw);
+    $('#cvsEnemy').attr("height", ch);
+    drawGrid(ctxEnemy,gridWidth,gridHeight,p);
   }
   /* function that draw the grid */
-  function drawGrid(cvs,width,height,p){
-    var ctx = cvs.get(0).getContext("2d");
+  function drawGrid(ctx,width,height,p){
     var arrayCoordX = ["a","b","c","d","e","f","g","h","i","j"]
     var arrayCoordY = ["1","2","3","4","5","6","7","8","9","10"]
     var i=0;
@@ -79,6 +155,20 @@ jQuery(function () {
     ctx.strokeStyle = "black";
     ctx.stroke();
   }
+  /* function that draw all the boats */
+  function drawBoats(){
+    for (var i=0; i<boats.length; i++)
+    {
+      var b = boats[i];
+      drawBoat(b);
+    }
+  }
+  /* function that draw specific boat */
+  function drawBoat(boat){
+    ctxPlayer.fillStyle = "rgb(48,48,48)";
+    ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
+  }
+
   initEnemyGrid();
   initPlayerGrid();
 
