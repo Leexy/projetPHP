@@ -17,6 +17,12 @@ WHERE game_id = :game_id
 AND user_id = :user_id;
 SQL;
 
+    /**
+     * @param User $user
+     * @param Game $game
+     * @return Ship[]
+     * @throws RepositoryError
+     */
   public function fetchForUserInGame(User $user, Game $game)
   {
     try {

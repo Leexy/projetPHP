@@ -33,6 +33,12 @@ class Game extends Base
   {
     return $this->data['user2_id'];
   }
+  public function getOpponentIdOf(User $player)
+  {
+    return $player->getId() === $this->getUser1Id() ?
+        $this->getUser2Id() :
+        $this->getUser1Id();
+  }
 
   public function getPlayingUserId()
   {

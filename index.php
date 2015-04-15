@@ -3,44 +3,44 @@ require 'vendor/autoload.php';
 require 'bootstrap.php';
 
 use Repository\GameRepository;
+use Repository\Error\FullGame;
 use Entity\Game;
+use Service\Game\Hit as HitService;
+use Service\Game\Error\Hit as HitError;
 
 use Repository\UserRepository;
 use Entity\User;
 use Service\User\Signup;
 
 use Repository\ShipRepository;
-use Entity\Ship;
 
 use Repository\HitRepository;
 use Entity\Hit;
 
 $app->post('/games/:id/hits', function ($gameId) use($app) {
-  $app->response->headers->set('Content-Type', 'application/json');
-  $hitData = json_decode($app->request->getBody(), true);
-  $user = $app->user;
-  $gameRepository = new GameRepository($app->dbh);
-  $game = $gameRepository->fetchById($gameId);
-  if (!$game->isPlayerTurn($user)) {
-    $app->halt(403);
-  }
-  $hitRepository = new HitRepository($app->dbh);
-  $hit = $hitRepository->create($hitData["x"], $hitData["y"], $game, $user);
-  $success = false;
-  $userRepository = new UserRepository($app->dbh);
-  $opponent = $userRepository->fetchById($user->getId() === $game->getUser1Id()?
-    $game->getUser2Id():
-    $game->getUser1Id()
-  );
-  $shipRepository = new ShipRepository($app->dbh);
-  foreach ($shipRepository->fetchForUserInGame($opponent, $game) as $ship) {
-    if ($ship->isHitBy($hit)) {
-      $success = true;
-      break;
+    $app->response->headers->set('Content-Type', 'application/json');
+    $hit = new Hit(json_decode($app->request->getBody(), true));
+    $gameRepository = new GameRepository($app->dbh);
+    $game = $gameRepository->fetchById($gameId);
+    $hitService = new HitService();
+    $hitService->setGame($game);
+    $hitService->setShooter($app->user);
+    $hitService->setGameRepository($gameRepository);
+    $hitService->setHitRepository(new HitRepository($app->dbh));
+    $hitService->setShipRepository(new ShipRepository($app->dbh));
+    try {
+        $result = $hitService->handle($hit);
+        $app->response->setBody(json_encode($result));
+    } catch (HitError $error) {
+        switch ($error->getCode()) {
+            case HitError::CODE_NOT_PLAYING:
+            case HitError::CODE_NOT_YOUR_TURN:
+                $app->halt(403);
+                break;
+            default:
+                throw $error;
+        }
     }
-  }
-  $gameRepository->switchPlayingUser($game);
-  $app->response->setBody(json_encode(array_merge(['success' => $success], $hit->getPosition())));
 })->name('game.hit');
 
 $app->get('/games/:id/state', function ($gameId) use($app) {

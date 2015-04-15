@@ -16,22 +16,16 @@ INSERT INTO hits(x, y, game_id, user_id)
 VALUES(:x, :y, :game_id, :user_id);
 SQL;
 
-  public function create($x, $y, Game $game, User $user)
+  public function create(Hit $hit)
   {
     try {
       $stmt = $this->dbh->prepare(static::$CREATE_QUERY);
-      $stmt->bindValue('x', $x, PDO::PARAM_INT);
-      $stmt->bindValue('y', $y, PDO::PARAM_INT);
-      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
-      $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      $stmt->bindValue('x', $hit->getX(), PDO::PARAM_INT);
+      $stmt->bindValue('y', $hit->getY(), PDO::PARAM_INT);
+      $stmt->bindValue('user_id', $hit->getUserId(), PDO::PARAM_INT);
+      $stmt->bindValue('game_id', $hit->getGameId(), PDO::PARAM_INT);
       $stmt->execute();
-      return new Hit([
-        'id' => $this->dbh->lastInsertId(),
-        'x' => $x,
-        'y' => $y,
-        'user_id' => $user->getId(),
-        'game_id' => $game->getId(),
-      ]);
+      $hit->setId($this->dbh->lastInsertId());
     } catch (PDOException $error) {
       throw RepositoryError::wrap($error);
     }
