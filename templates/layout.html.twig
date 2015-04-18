@@ -6,13 +6,14 @@
 {% block css %}
     <link href="/assets/css/style.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
+    <link rel="icon" type="img/png" href="/assets/img/favicon.png" />
   </head>
   <body>
     <div id="wrapper">
     <div id="header-wrapper">
       <div id="header">
         <div id="title">
-          <h1><a href="#">Battleship game</a></h1><br/>
+          <h1>Battleship game</h1><br/>
         </div>
       </div>
     </div>  
@@ -21,11 +22,12 @@
     <div id="menu-wrapper">
       <ul id="menu">
         <li class="current_page_item"><a href="#"><span>Homepage</span></a></li>
+        <li><a href="#"><span>Games awaiting</span></a></li>
+        <li><a href="#"><span>Games list</span></a></li>
         <li><a href="#"><span>Profil</span></a></li>
         <li><a href="#"><span>Statistics</span></a></li>
-        <li><a href="#"><span>Contact</span></a></li>
       </ul>
-      <p>Hello {{ user.getEmail() }}! <a href="{{ urlFor('logout.process') }}">Log out</a></p>
+      <p>Hello {{ user.getEmail() }}! <a href="{{ urlFor('logout.process') }}"><img id="logout" title="Log out" src="/assets/img/logout.png" alt="Log out"></a></p>
     </div>
 {% endif %}
     <!-- end #menu -->

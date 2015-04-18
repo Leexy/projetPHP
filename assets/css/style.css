@@ -122,6 +122,10 @@ a:hover {
 	font-weight: normal;
 	color: #FFFFFF;
 }
+#logout {
+	margin-top:5px;
+	float: right;
+}
 
 #menu-wrapper a {
 	color: #FFFFFF;
