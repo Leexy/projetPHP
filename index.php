@@ -92,6 +92,19 @@ $app->get('/games', function () use($app) {
   $app->render('games.html.twig', ['games' => $games]);
 })->name('games.list');
 
+$app->get('/user/profile', function () use($app) {
+  $gameRepository = new GameRepository($app->dbh);
+  $victoryCount = $gameRepository->getVictoryCountFor($app->user);
+  $playedCount = $gameRepository->getPlayedCountFor($app->user);
+  // TODO: create user-profile.html.twig
+  $app->render('user-profile.html.twig', [
+    'display_name' => $app->user->getDisplayName(),
+    'email' => $app->user->getEmail(),
+    'victory_count' => $victoryCount,
+    'played_count' => $playedCount,
+  ]);
+})->name('user.profile');
+
 $app->get('/user/games', function () use($app) {
   $gameRepository = new GameRepository($app->dbh);
   $awaitingGames = $gameRepository->fetchWaitingFor($app->user);

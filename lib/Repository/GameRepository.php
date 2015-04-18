@@ -46,6 +46,17 @@ SELECT * FROM games
 WHERE id = :id;
 SQL;
 
+  private static $FETCH_VICTORY_COUNT_FOR_USER = <<<'SQL'
+SELECT count(id) FROM games
+WHERE winner_id = :user_id;
+SQL;
+
+  private static $FETCH_PLAYED_COUNT_FOR_USER = <<<'SQL'
+SELECT count(id) FROM games
+WHERE state = :finished_state
+AND (user1_id = :user_id OR user2_id = :user_id);
+SQL;
+
   private static $SWITCH_PLAYING_USER_QUERY = <<<'SQL'
 UPDATE games
 SET playing_user_id = IF(playing_user_id = user1_id, user2_id, user1_id)
@@ -127,6 +138,31 @@ SQL;
       $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
       $stmt->execute();
       return $stmt->fetchAll();
+    } catch(PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function getVictoryCountFor(User $user)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_VICTORY_COUNT_FOR_USER);
+      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchColumn();
+    } catch(PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function getPlayedCountFor(User $user)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_PLAYED_COUNT_FOR_USER);
+      $stmt->bindValue('finished_state', Game::STATE_FINISHED, PDO::PARAM_STR);
+      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchColumn();
     } catch(PDOException $error) {
       throw RepositoryError::wrap($error);
     }

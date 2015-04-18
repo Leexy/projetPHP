@@ -9,6 +9,14 @@ class User extends Base
   const ROLE_ADMIN = 'admin';
 
   /**
+   * @return string
+   */
+  public function getDisplayName()
+  {
+    return $this->data['display_name'];
+  }
+
+  /**
   * @return string
   */
   public function getEmail()

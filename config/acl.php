@@ -17,6 +17,7 @@ class Acl extends ZendAcl
     $this->addResource('/games/:id');
     $this->addResource('/games/:id/state');
     $this->addResource('/games/:id/hits');
+    $this->addResource('/user/profile');
     $this->addResource('/user/games');
     $this->addResource('/signup');
     $this->addResource('/login');
@@ -34,6 +35,7 @@ class Acl extends ZendAcl
     $this->allow('member', '/games/:id/hits', 'POST');
 
     $this->allow('member', '/user/games', 'GET');
+    $this->allow('member', '/user/profile', 'GET');
 
     $this->allow('admin');
   }
