@@ -1,0 +1,14 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Forbidden – {{ parent() }}{% endblock %}
+
+{% block content %}
+
+  <h1>Wow, you can't see that.</h1>
+  <p>
+    I mean, really. Sorry.
+  </p>
+  <p>
+    <a href="{{ urlFor('home') }}">You could try to go to the home page.</a>
+  </p>
+{% endblock %}

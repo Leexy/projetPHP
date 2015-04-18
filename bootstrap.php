@@ -3,6 +3,9 @@ require 'config/app.php';
 require 'config/database.php';
 require 'config/acl.php';
 
+use JeremyKendall\Slim\Auth\Exception\HttpUnauthorizedException;
+use JeremyKendall\Slim\Auth\Exception\HttpForbiddenException;
+
 use Entity\User;
 
 use JeremyKendall\Password\PasswordValidator;
@@ -47,5 +50,33 @@ $app->hook('slim.before.dispatch', function () use ($app) {
     'user' => $app->user,
     'user_role' => $app->userRole,
   ]);
+});
+
+$app->error(function (\Exception $error) use($app) {
+    if ($error instanceof HttpUnauthorizedException) {
+        $app->log->info(sprintf('401 uri[%s]', $app->request->getResourceUri()));
+        if ($app->request->isXhr()) {
+            $app->halt(401);
+        } else {
+            $queryString = sprintf('?%s', http_build_query([
+                'redirect_to' => $app->request->getResourceUri(),
+            ]));
+            $app->redirect($app->urlFor('login.page') . $queryString);
+        }
+    } else if ($error instanceof HttpForbiddenException) {
+        $app->log->info(sprintf('403 user[%d] uri[%s]', $app->user->getId(), $app->request->getResourceUri()));
+        if ($app->request->isXhr()) {
+            $app->halt(403);
+        } else {
+            $app->render('error/403.html.twig', ['error' => $error], 403);
+        }
+    } else {
+        $app->log->error(sprintf('500 user[%d] uri[%s] error[%s]', $app->user->getId(), $app->request->getResourceUri(), $error->getMessage()));
+        if ($app->request->isXhr()) {
+            $app->halt(500);
+        } else {
+            $app->render('error/500.html.twig', ['error' => $error], 500);
+        }
+    }
 });
 

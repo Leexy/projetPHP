@@ -10,6 +10,7 @@
     "slim/slim": "~2.6",
     "slim/views": "0.1.*",
     "twig/extensions": "~1.2",
-    "jeremykendall/slim-auth": "0.0.7-alpha"
+    "jeremykendall/slim-auth": "0.0.7-alpha",
+    "slim/logger": "0.1.*"
   }
 }
