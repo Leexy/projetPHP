@@ -71,7 +71,7 @@ $app->error(function (\Exception $error) use($app) {
             $app->render('error/403.html.twig', ['error' => $error], 403);
         }
     } else {
-        $app->log->error(sprintf('500 user[%d] uri[%s] error[%s]', $app->user->getId(), $app->request->getResourceUri(), $error->getMessage()));
+        $app->log->error(sprintf('500 user[%s] uri[%s] error[%s]', !empty($app->user) ? $app->user->getId() : 'guest', $app->request->getResourceUri(), $error->getMessage()));
         if ($app->request->isXhr()) {
             $app->halt(500);
         } else {
