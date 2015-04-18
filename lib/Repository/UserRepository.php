@@ -21,6 +21,15 @@ SQL;
 SELECT * FROM users WHERE id = :user_id;
 SQL;
 
+  private static $FETCH_TOP_TEN = <<<'SQL'
+SELECT users.id, display_name, COUNT(games.winner_id) as victories
+FROM users
+JOIN games ON users.id = games.winner_id
+GROUP BY users.id, display_name
+ORDER BY victories DESC
+LIMIT 10;
+SQL;
+
   public function create($displayName, $email, $password)
   {
     try {
@@ -47,6 +56,17 @@ SQL;
       return new User($stmt->fetch());
     } catch (PDOException $error) {
       RepositoryError::wrap($error);
+    }
+  }
+
+  public function fetchTopTen()
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_TOP_TEN);
+      $stmt->execute();
+      return $stmt->fetchAll();
+    } catch (PDOException $error) {
+      throw RepositoryError::wrap($error);
     }
   }
 

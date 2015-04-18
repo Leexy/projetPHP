@@ -105,6 +105,14 @@ $app->get('/user/profile', function () use($app) {
   ]);
 })->name('user.profile');
 
+$app->get('/top10', function () use($app) {
+  $userRepository = new UserRepository($app->dbh);
+  $topTen = $userRepository->fetchTopTen();
+  // TODO: create top10.html.twig
+  $app->render('top10.html.twig', ['top_ten' => $topTen]);
+})->name('top10');
+
+
 $app->get('/user/games', function () use($app) {
   $gameRepository = new GameRepository($app->dbh);
   $awaitingGames = $gameRepository->fetchWaitingFor($app->user);
