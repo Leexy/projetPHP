@@ -55,7 +55,7 @@ SQL;
       $stmt->execute();
       return new User($stmt->fetch());
     } catch (PDOException $error) {
-      RepositoryError::wrap($error);
+      throw RepositoryError::wrap($error);
     }
   }
 
