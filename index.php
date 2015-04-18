@@ -76,7 +76,11 @@ $app->get('/games/:id', function ($gameId) use($app) {
       }
     }
   }
-  $opponent = $userRepository->fetchById($game->getOpponentIdOf($user));
+  $opponent = null;
+  $opponentId = $game->getOpponentIdOf($user);
+  if($opponentId){
+    $opponent = $userRepository->fetchById($opponentId);
+  }
   $app->render('game.html.twig', [
     'game' => $game,
     'user' => $user,
