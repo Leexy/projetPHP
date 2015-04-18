@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS hits (
     id INTEGER NOT NULL AUTO_INCREMENT,
     x INTEGER NOT NULL,
     y INTEGER NOT NULL,
+    success tinyint(4) NOT NULL,
     game_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     PRIMARY KEY (id),

@@ -63,6 +63,13 @@ SET playing_user_id = IF(playing_user_id = user1_id, user2_id, user1_id)
 WHERE id = :game_id;
 SQL;
 
+
+
+  private static $SET_WINNER = <<<'SQL'
+UPDATE games SET state = :finished_state, winner_id = :winner_id
+WHERE id = :game_id;
+SQL;
+
   public function tryToAddUser(User $user, Game $game)
   {
     try {
@@ -127,6 +134,21 @@ SQL;
       throw $error;
     } catch (PDOException $error) {
       $this->dbh->rollBack();
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function win(Game $game, User $winner)
+  {
+    $game->setWinnerId($winner->getId());
+    $game->setState(Game::STATE_FINISHED);
+    try {
+      $stmt = $this->dbh->prepare(static::$SET_WINNER);
+      $stmt->bindValue('finished_state', Game::STATE_FINISHED, PDO::PARAM_STR);
+      $stmt->bindValue('winner_id', $winner->getId(), PDO::PARAM_INT);
+      $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      return $stmt->execute();
+    } catch(PDOException $error) {
       throw RepositoryError::wrap($error);
     }
   }

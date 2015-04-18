@@ -10,7 +10,7 @@ class Base
   protected $data;
 
   /**
-   * @param array $data
+   * @param array|int $data
    */
   public function __construct($data = [])
   {

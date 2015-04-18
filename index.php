@@ -7,15 +7,42 @@ use Repository\Error\FullGame;
 use Entity\Game;
 use Service\Game\Hit as HitService;
 use Service\Game\Error\Hit as HitError;
+use Service\Game\ShipPlacing;
+use Service\Game\Error\ShipPlacing as ShipPlacingError;
 
 use Repository\UserRepository;
 use Entity\User;
 use Service\User\Signup;
 
 use Repository\ShipRepository;
+use Entity\Ship;
 
 use Repository\HitRepository;
 use Entity\Hit;
+
+$app->post('/games/:id/place-ship', function ($gameId) use($app) {
+  $app->response->headers->set('Content-Type', 'application/json');
+  $gameRepository = new GameRepository($app->dbh);
+  $game = $gameRepository->fetchById($gameId);
+  $ship = new Ship(json_decode($app->request->getBody(), true));
+  $shipPlacingService = new ShipPlacing();
+  $shipPlacingService->setGame($game);
+  $shipPlacingService->setOwner($app->user);
+  $shipPlacingService->setShipRepository(new ShipRepository($app->dbh));
+  try {
+    $result = $shipPlacingService->handle($ship);
+    $app->response->setBody(json_encode($result));
+  } catch (ShipPlacingError $error) {
+    switch ($error->getCode()) {
+    case ShipPlacingError::CODE_INVALID_GAME_STATE:
+      $app->halt(403);
+      break;
+    default:
+      throw $error;
+      break;
+    }
+  }
+})->name('games.place-ship');
 
 $app->post('/games/:id/hits', function ($gameId) use($app) {
     $app->response->headers->set('Content-Type', 'application/json');

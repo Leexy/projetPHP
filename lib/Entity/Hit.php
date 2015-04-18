@@ -14,6 +14,11 @@ class Hit extends Base
         return $this->data['y'];
     }
 
+    public function isSuccess()
+    {
+        return !empty($this->data['success']);
+    }
+
     public function getUserId()
     {
         return $this->data['user_id'];
@@ -24,10 +29,10 @@ class Hit extends Base
         return $this->data['game_id'];
     }
 
-	public function getPosition()
-	{
-		return ['x' => $this->getX(), 'y' => $this->getY()];
-	}
+    public function getPosition()
+    {
+        return ['x' => $this->getX(), 'y' => $this->getY()];
+    }
 
     public function setUserId($userId)
     {
@@ -37,5 +42,10 @@ class Hit extends Base
     public function setGameId($gameId)
     {
         $this->data['game_id'] = $gameId;
+    }
+
+    public function setSuccess($success)
+    {
+        $this->data['success'] = (bool) $success;
     }
 }

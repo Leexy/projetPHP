@@ -50,16 +50,40 @@ class Hit
         }
         $hit->setGameId($this->game->getId());
         $hit->setUserId($this->shooter->getId());
-        $this->hitRepository->create($hit);
-        $success = false;
+        $hit->setSuccess(false);
         foreach ($this->getOpponentShips() as $opponentShip) {
             if ($opponentShip->isHitBy($hit)) {
-                $success = true;
-                break;
+                $hit->setSuccess(true);
             }
         }
+        $this->hitRepository->create($hit);
+        $won = false;
+        if ($hit->isSuccess() and $this->isOpponentDestroyed()) {
+            $this->gameRepository->win($this->game, $this->shooter);
+            $won = true;
+        }
         $this->gameRepository->switchPlayingUser($this->game);
-        return array_merge(['success' => $success], $hit->getPosition());
+        return [
+            'success' => $hit->isSuccess(),
+            'x' => $hit->getX(),
+            'y' => $hit->getY(),
+            'won' => $won,
+        ];
+    }
+
+    protected function isOpponentDestroyed()
+    {
+        $numberOfSuccessHitsToDestroy = (
+          ShipPlacing::SHIPS_OF_SIZE_2 * 2 +
+          ShipPlacing::SHIPS_OF_SIZE_3 * 3 +
+          ShipPlacing::SHIPS_OF_SIZE_4 * 4 +
+          ShipPlacing::SHIPS_OF_SIZE_5 * 5
+        );
+        return (
+          $this->hitRepository->countSuccessfulHits($this->shooter, $this->game)
+          >=
+          $numberOfSuccessHitsToDestroy
+        );
     }
 
     /**
