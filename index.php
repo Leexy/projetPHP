@@ -114,10 +114,11 @@ $app->post('/games', function () use($app) {
 })->name('games.create');
 
 $app->get('/', function () use($app) {
-  $app->render($app->userRole === User::ROLE_GUEST ?
-    'guest-home.html.twig' :
-    'home.html.twig'
-  );
+  if ($app->userRole === User::ROLE_GUEST) {
+    $app->redirectTo('login.page');
+  } else {
+    $app->redirectTo('user.games.list');
+  }
 })->name('home');
 
 $app->get('/signup', function () use($app) {
