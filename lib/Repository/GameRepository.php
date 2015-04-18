@@ -175,7 +175,10 @@ SQL;
       $stmt = $this->dbh->prepare(sprintf(static::$FETCH_FOR_USER_INCLUDING_STATES, $states));
       $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
       $stmt->execute();
-      return $stmt->fetchAll();
+      foreach ($stmt->fetchAll() as $row) {
+        $result[] = new Game($row);
+      }
+      return $result;
     } catch(PDOException $error) {
       throw RepositoryError::wrap($error);
     }

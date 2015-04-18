@@ -120,12 +120,19 @@ $app->get('/top10', function () use($app) {
 
 
 $app->get('/user/games', function () use($app) {
+  $userRepository = new UserRepository($app->dbh);
   $gameRepository = new GameRepository($app->dbh);
   $awaitingGames = $gameRepository->fetchWaitingFor($app->user);
   $startedGames = $gameRepository->fetchStartedFor($app->user);
+  $opponents = [];
+  foreach ($startedGames as $game) {
+    $gameId=$game->getId();
+    $opponents[$gameId] = $userRepository->fetchById($game->getOpponentIdOf($app->user));
+  }
   $app->render('user-games.html.twig', [
     'awaiting_games' => $awaitingGames,
     'started_games' => $startedGames,
+    'opponents' => $opponents,
   ]);
 })->name('user.games.list');
 

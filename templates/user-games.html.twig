@@ -10,7 +10,7 @@
     <ul>
     {% for game in started_games %}
       <li>
-        <a href="{{ urlFor('game', {"id": game.id}) }}">Play this game!</a>
+        <a href="{{ urlFor('game', {"id": game.id}) }}">Play this game with {{opponents[game.id].getDisplayName}}</a>
       </li>
     {% endfor %}
     </ul>
