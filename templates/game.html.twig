@@ -17,9 +17,11 @@ var GAME_STATE = {{ states|json_encode|raw }};
 
 {% block content %}
   <div id="game">
-    <ul>
-      <li>{{ game.id }}</li>
-    </ul>
+    {% if opponent is empty %}
+        <p>Be patient, your opponent will come soon !</p>
+    {% else %}
+        <p>You're playing with <strong>{{ opponent.getDisplayName() }}</strong></p>
+    {% endif %}
   </div>
   <canvas id="cvsPlayer"></canvas>
   <canvas id="cvsEnemy"></canvas>

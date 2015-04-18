@@ -61,6 +61,7 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
 
 $app->get('/games/:id', function ($gameId) use($app) {
   $user = $app->user;
+  $userRepository = new UserRepository($app->dbh);
   $gameRepository = new GameRepository($app->dbh);
   $game = $gameRepository->fetchById($gameId);
   if (!$game->isPlaying($user)) {
@@ -75,8 +76,11 @@ $app->get('/games/:id', function ($gameId) use($app) {
       }
     }
   }
+  $opponent = $userRepository->fetchById($game->getOpponentIdOf($user));
   $app->render('game.html.twig', [
     'game' => $game,
+    'user' => $user,
+    'opponent' => $opponent,
     'states' => [
       'WAITING' => Game::STATE_WAITING,
       'PLACING' => Game::STATE_PLACING,
