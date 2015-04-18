@@ -16,12 +16,15 @@
     <h1>Sign up</h1>
     <form method="post" action="{{ urlFor('signup.process') }}">
       <p>
+        <img id="userPwd" src="/assets/img/user.png">
         <input type="email" autofocus required id="email" name="email" value="{{ email }}" placeholder="john.doe@example.com" />
       </p>
       <p>
+        <img id="userPwd" src="/assets/img/pwd.png">
         <input type="password" required id="password" name="password" placeholder="password" />
       </p>
       <p>
+        <img id="userPwd" src="/assets/img/pwd.png">
         <input type="password" required id="password-confirm" name="password-confirm" placeholder="re-type your password" />
       </p>
       <p class="submit"><button type="submit">Sign up</button></p>

@@ -38,8 +38,8 @@
   margin-top: 0;
 }
  
-.login input[type=text], .login input[type=password] {
-  width: 278px;
+.login input[type=email], .login input[type=password] {
+  width: 230px;
 }
  
 .login {
@@ -127,4 +127,10 @@ button[type=submit]:active {
   border-color: #9eb9c2 #b3c0c8 #b4ccce;
   -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
   box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+#userPwd, #userImg{
+	width:30px;
+	height:30px;
+	vertical-align: middle;
 }

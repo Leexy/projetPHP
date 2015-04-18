@@ -16,9 +16,11 @@
     <h1>Login</h1>
     <form method="post" action="{{ urlFor('login.process') }}">
       <p>
+        <img id="userImg" src="/assets/img/user.png">
         <input type="email" autofocus required id="email" name="email" value="{{ email }}" placeholder="john.doe@example.com" />
       </p>
       <p>
+        <img id="userPwd" src="/assets/img/pwd.png">
         <input type="password" required id="password" name="password" placeholder="password" />
       </p>
       {% if redirect_to is defined %}
