@@ -96,7 +96,6 @@ $app->get('/user/profile', function () use($app) {
   $gameRepository = new GameRepository($app->dbh);
   $victoryCount = $gameRepository->getVictoryCountFor($app->user);
   $playedCount = $gameRepository->getPlayedCountFor($app->user);
-  // TODO: create user-profile.html.twig
   $app->render('user-profile.html.twig', [
     'display_name' => $app->user->getDisplayName(),
     'email' => $app->user->getEmail(),

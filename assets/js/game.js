@@ -169,7 +169,31 @@ jQuery(function () {
     ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
   }
 
+  function onUserAction(x,y){
+    console.log(x,y);
+  }
+  
+  function onMouseClick(x,y){
+    console.log(x,y);
+  }
+
+  //init both grids
   initEnemyGrid();
   initPlayerGrid();
-
+  // called every time the mouse is moved
+  $('#cvsPlayer').mousemove( function (e) {
+    var targetOffset = $(e.target).offset();
+    var x = e.offsetX === undefined ? e.clientX-targetOffset.left : e.offsetX;
+    var y = e.offsetY === undefined ? e.clientY-targetOffset.top : e.offsetY;
+    onUserAction(x,y);
+  });
+  //called when mouse down
+  $('#cvsPlayer').mousedown( function (e) {
+    var targetOffset = $(e.target).offset();
+    var x = e.offsetX === undefined ? e.clientX-targetOffset.left : e.offsetX;
+    var y = e.offsetY === undefined ? e.clientY-targetOffset.top : e.offsetY;
+    if( e.which == 1 ){
+      onMouseClick(x,y);
+    }
+  });
 });
