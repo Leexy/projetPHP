@@ -107,7 +107,6 @@ $app->get('/user/profile', function () use($app) {
 $app->get('/top10', function () use($app) {
   $userRepository = new UserRepository($app->dbh);
   $topTen = $userRepository->fetchTopTen();
-  // TODO: create top10.html.twig
   $app->render('top10.html.twig', ['top_ten' => $topTen]);
 })->name('top10');
 

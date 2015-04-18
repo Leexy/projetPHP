@@ -1,0 +1,25 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}{{ parent() }} — Top 10{% endblock %}
+{% block css %}
+{{ parent() }}
+
+{% endblock %}
+{% block content %}
+  <div id="top">
+  {% if top10 is empty %}
+  <p>There is no top10</p>
+  {% else %}
+    <ul>
+      {% for user in top10 %}
+        <li>
+          {{user.display_name}}
+        </li>
+        <li>
+          {{user.victories}}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  </div>
+{% endblock %}
