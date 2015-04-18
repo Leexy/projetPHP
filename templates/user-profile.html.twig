@@ -6,15 +6,12 @@
     <link href="/assets/css/profile.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
 {% block content %}
-  <div id="profile" class="tableProfile">
+  <div id="profile" class="profile-table">
     <table>
-    
-      <tr><th>Nickname</th><td>{{ display_name }}</td></tr>
+      <tr><th>Name</th><td>{{ display_name }}</td></tr>
       <tr><th>Email</th><td>{{ email }}</td></tr>
       <tr><th>Victories</th><td>{{ victory_count }}</td></tr>
       <tr><th>Played games</th><td>{{ played_count }}</td></tr>
-
-    
     </table>
   </div>
 {% endblock %}
