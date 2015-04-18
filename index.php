@@ -122,17 +122,17 @@ $app->get('/', function () use($app) {
 })->name('home');
 
 $app->get('/signup', function () use($app) {
-  $app->render('signup.html.twig', [
-    'email' => $app->request->get('email', ''),
-  ]);
+  $app->render('signup.html.twig');
 })->name('signup.page');
 
 $app->post('/signup', function () use($app) {
+  $displayName = $app->request->post('display-name', '');
   $email = $app->request->post('email', '');
   $password = $app->request->post('password', '');
   $passwordConfirmation = $app->request->post('password-confirm', '');
   $signupService = new Signup();
   $signupService->setUserRepository(new UserRepository($app->dbh));
+  $signupService->setDisplayName($displayName);
   $signupService->setEmail($email);
   $signupService->setPassword($password);
   $signupService->setPasswordConfirmation($passwordConfirmation);

@@ -13,18 +13,19 @@ class UserRepository extends Base
   private static $DUPLICATION_CODE = '23000';
 
   private static $CREATION_QUERY = <<<'SQL'
-INSERT INTO users(email, password)
-VALUES(:email, :password);
+INSERT INTO users(display_name, email, password)
+VALUES(:display_name, :email, :password);
 SQL;
 
   private static $FETCH_BY_ID_QUERY = <<<'SQL'
 SELECT * FROM users WHERE id = :user_id;
 SQL;
 
-  public function create($email, $password)
+  public function create($displayName, $email, $password)
   {
     try {
       $stmt = $this->dbh->prepare(static::$CREATION_QUERY);
+      $stmt->bindValue('display_name', $displayName, PDO::PARAM_STR);
       $stmt->bindValue('email', $email, PDO::PARAM_STR);
       $stmt->bindValue('password', $this->hash($password), PDO::PARAM_STR);
       $stmt->execute();

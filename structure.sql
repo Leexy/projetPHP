@@ -8,9 +8,10 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(50) DEFAULT 'member',
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NULL,
-    display_name VARCHAR(255) NULL,
+    display_name VARCHAR(255) NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY unique_email (email)
+    UNIQUE KEY unique_email (email),
+    UNIQUE KEY unique_display_name (display_name)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS games (

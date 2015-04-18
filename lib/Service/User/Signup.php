@@ -11,6 +11,7 @@ class Signup
   const ERROR_INVALID_EMAIL = 20;
   const ERROR_BAD_CONFIRMATION = 30;
   const ERROR_EMAIL_ALREADY_USED = 40;
+  const ERROR_DISPLAY_NAME_ALREADY_USED = 41;
   const ERROR_QUERY_FAILED = 50;
 
   /**
@@ -31,6 +32,11 @@ class Signup
   /**
    * @var string
    */
+  private $displayName;
+
+  /**
+   * @var string
+   */
   private $password;
 
   /**
@@ -40,7 +46,7 @@ class Signup
 
   public function proceed()
   {
-    if (!strlen($this->email) or !strlen($this->password)) {
+    if (!strlen($this->displayName) or !strlen($this->email) or !strlen($this->password)) {
       $this->error = self::ERROR_NO_DATA;
     } else if (!$this->isEmailValid()) {
       $this->error = self::ERROR_INVALID_EMAIL;
@@ -50,9 +56,17 @@ class Signup
       try {
         $this->createUser();
       } catch (DuplicatedKey $error) {
-        $this->error = $error->getKey() === 'email' ?
-          self::ERROR_EMAIL_ALREADY_USED :
-          self::ERROR_QUERY_FAILED;
+        switch ($error->getKey()) {
+        case 'email':
+          $this->error = self::ERROR_EMAIL_ALREADY_USED;
+          break;
+        case 'display_name':
+          $this->error = self::ERROR_DISPLAY_NAME_ALREADY_USED;
+          break;
+        default:
+          $this->error = self::ERROR_QUERY_FAILED;
+          break;
+        }
       } catch (RepositoryError $error) {
         $this->error = self::ERROR_QUERY_FAILED;
       }
@@ -61,7 +75,7 @@ class Signup
 
   private function createUser()
   {
-    $this->userRepository->create($this->email, $this->password);
+    $this->userRepository->create($this->displayName, $this->email, $this->password);
   }
 
   /**
@@ -86,6 +100,14 @@ class Signup
   public function setEmail($email)
   {
     $this->email = $email;
+  }
+
+  /**
+   * @param string $displayName
+   */
+  public function setDisplayName($displayName)
+  {
+    $this->displayName = $displayName;
   }
 
   /**
