@@ -16,8 +16,12 @@
     {% endif %}
     <form method="post" action="{{ urlFor('signup.process') }}">
       <p>
-        <img id="userPwd" src="/assets/img/user.png">
-        <input type="email" autofocus required id="email" name="email" value="{{ email }}" placeholder="john.doe@example.com" />
+        <img id="userName" src="/assets/img/user.png">
+        <input type="text" autofocus required id="display-name" name="display-name" placeholder="Johnny" />
+      </p>    
+      <p>
+        <img id="userPwd" src="/assets/img/email.png">
+        <input type="email" autofocus required id="email" name="email" placeholder="john.doe@example.com" />
       </p>
       <p>
         <img id="userPwd" src="/assets/img/pwd.png">
