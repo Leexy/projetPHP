@@ -211,3 +211,8 @@ a:hover {
 	text-decoration: underline;
 	color: #70C964;
 }
+
+.error{
+	color:#A71010;
+	font-size: 12px;
+}

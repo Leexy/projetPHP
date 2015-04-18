@@ -4,6 +4,11 @@
 
 {% block content %}
   <div id="games">
+  {% if flash.error is defined %}
+    <p class="error">
+      {{ flash.error }}
+    </p>
+  {% endif %}
   {% if games is empty %}
     <p>There is no game. You should create one!</p>
   {% else %}
@@ -17,11 +22,6 @@
   {% endif %}
   </div>
   <div id="game-creation">
-    {% if flash.error is defined %}
-      <p class="error">
-        {{ flash.error }}
-      </p>
-    {% endif %}
     <form method="post" action="{{ urlFor('games.create') }}">
       <button type="submit">Create a new game!</button>
     </form>
