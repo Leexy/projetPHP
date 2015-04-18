@@ -35,6 +35,12 @@ SELECT * FROM games
 WHERE state = :state;
 SQL;
 
+  private static $FETCH_FOR_USER_INCLUDING_STATES = <<<'SQL'
+SELECT * FROM games
+WHERE state IN(%s)
+AND (user1_id = :user_id OR user2_id = :user_id);
+SQL;
+
   private static $FETCH_BY_ID_QUERY = <<<'SQL'
 SELECT * FROM games
 WHERE id = :id;
@@ -110,6 +116,31 @@ SQL;
       throw $error;
     } catch (PDOException $error) {
       $this->dbh->rollBack();
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function fetchWaitingFor(User $user)
+  {
+    try {
+      $stmt = $this->dbh->prepare(sprintf(static::$FETCH_FOR_USER_INCLUDING_STATES, $this->dbh->quote(Game::STATE_WAITING)));
+      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchAll();
+    } catch(PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function fetchStartedFor(User $user)
+  {
+    $states = implode(', ', array_map([$this->dbh, 'quote'], Game::getStartedStates()));
+    try {
+      $stmt = $this->dbh->prepare(sprintf(static::$FETCH_FOR_USER_INCLUDING_STATES, $states));
+      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchAll();
+    } catch(PDOException $error) {
       throw RepositoryError::wrap($error);
     }
   }

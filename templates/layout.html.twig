@@ -21,9 +21,9 @@
 {% if user_role != "guest" %}    
     <div id="menu-wrapper">
       <ul id="menu">
-        <li class="current_page_item"><a href="#"><span>Homepage</span></a></li>
-        <li><a href="#"><span>Games awaiting</span></a></li>
-        <li><a href="#"><span>Games list</span></a></li>
+        <li class="current_page_item"><a href="{{ urlFor('home') }}"><span>Home</span></a></li>
+        <li><a href="{{ urlFor('games.list') }}"><span>Join a game</span></a></li>
+        <li><a href="{{ urlFor('user.games.list') }}"><span>My games</span></a></li>
         <li><a href="#"><span>Profil</span></a></li>
         <li><a href="#"><span>Statistics</span></a></li>
       </ul>

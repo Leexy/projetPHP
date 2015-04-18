@@ -9,6 +9,11 @@ class Game extends Base
   const STATE_PLAYING = 'playing';
   const STATE_FINISHED = 'finished';
 
+  public static function getStartedStates()
+  {
+    return [static::STATE_PLACING, static::STATE_PLAYING];
+  }
+
   public function isPlaying(User $user)
   {
     return in_array($user->getId(), [$this->getUser1Id(), $this->getUser2Id()], true);

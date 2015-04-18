@@ -59,7 +59,6 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
   $app->response->setBody(json_encode($response));
 })->name('game.state');
 
-
 $app->get('/games/:id', function ($gameId) use($app) {
   $user = $app->user;
   $gameRepository = new GameRepository($app->dbh);
@@ -92,6 +91,16 @@ $app->get('/games', function () use($app) {
   $games = $gameRepository->fetchWaiting();
   $app->render('games.html.twig', ['games' => $games]);
 })->name('games.list');
+
+$app->get('/user/games', function () use($app) {
+  $gameRepository = new GameRepository($app->dbh);
+  $awaitingGames = $gameRepository->fetchWaitingFor($app->user);
+  $startedGames = $gameRepository->fetchStartedFor($app->user);
+  $app->render('user-games.html.twig', [
+    'awaiting_games' => $awaitingGames,
+    'started_games' => $startedGames,
+  ]);
+})->name('user.games.list');
 
 $app->post('/games', function () use($app) {
   $gameRepository = new GameRepository($app->dbh);

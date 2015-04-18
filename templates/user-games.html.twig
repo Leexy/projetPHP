@@ -1,0 +1,33 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}My games — {{ parent() }}{% endblock %}
+
+{% block content %}
+  <h1>My games</h1>
+  {% if started_games is not empty %}
+    <h2>Started games</h2>
+    <div id="started-games">
+    <ul>
+    {% for game in started_games %}
+      <li>
+        <a href="{{ urlFor('game', {"id": game.id}) }}">Play this game!</a>
+      </li>
+    {% endfor %}
+    </ul>
+    </div>
+  {% endif %}
+  <h2>Games awaiting an opponent</h2>
+  <div id="started-games">
+  {% if awaiting_games is not empty %}
+    <ul>
+      {% for game in awaiting_games %}
+        <li>
+          <a href="{{ urlFor('game', {"id": game.id}) }}">Enter this game!</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No game to play? <a href="{{ urlFor('games.list') }}">Go find one!</a></p>
+  {% endif %}
+  </div>
+{% endblock %}
