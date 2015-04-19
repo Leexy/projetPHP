@@ -9,6 +9,8 @@ use Service\Game\Hit as HitService;
 use Service\Game\Error\Hit as HitError;
 use Service\Game\ShipPlacing;
 use Service\Game\Error\ShipPlacing as ShipPlacingError;
+use Service\Game\Ready;
+use Service\Game\Error\Ready as ReadyError;
 
 use Repository\UserRepository;
 use Entity\User;
@@ -69,6 +71,38 @@ $app->post('/games/:id/hits', function ($gameId) use($app) {
         }
     }
 })->name('game.hit');
+
+$app->post('/games/:id/ready', function ($gameId) use($app) {
+  $app->response->headers->set('Content-Type', 'application/json');
+  $gameRepository = new GameRepository($app->dbh);
+  $game = $gameRepository->fetchById($gameId);
+  $gameReadyService = new Ready();
+  $gameReadyService->setGameRepository($gameRepository);
+  $gameReadyService->setShipRepository(new ShipRepository($app->dbh));
+  $gameReadyService->setGame($game);
+  $gameReadyService->setPlayer($app->user);
+  try {
+    $gameReadyService->handle();
+    $app->response->setStatus(200);
+  } catch (ReadyError $error) {
+    switch ($error->getCode()) {
+    case ReadyError::CODE_USER_NOT_IN_GAME:
+      $app->halt(403);
+      break;
+    case ReadyError::CODE_INVALID_GAME_STATE:
+      $app->log->debug("trying to get ready whereas game state is '{$game->getState()}'");
+      $app->response->setStatus(403);
+      break;
+    case ReadyError::CODE_FLEET_NOT_READY:
+      $app->log->debug("trying to get ready whereas the fleet is not");
+      $app->response->setStatus(403);
+      break;
+    default:
+      throw $error;
+      break;
+    }
+  }
+})->name('game.ready');
 
 $app->get('/games/:id/state', function ($gameId) use($app) {
   $app->response->headers->set('Content-Type', 'application/json');
@@ -153,7 +187,7 @@ $app->get('/user/games', function () use($app) {
   $startedGames = $gameRepository->fetchStartedFor($app->user);
   $opponents = [];
   foreach ($startedGames as $game) {
-    $gameId=$game->getId();
+    $gameId = $game->getId();
     $opponents[$gameId] = $userRepository->fetchById($game->getOpponentIdOf($app->user));
   }
   $app->render('user-games.html.twig', [

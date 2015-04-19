@@ -6,6 +6,8 @@ class Game extends Base
 {
   const STATE_WAITING = 'waiting';
   const STATE_PLACING = 'placing';
+  const STATE_PLAYER1_READY = 'player1_ready';
+  const STATE_PLAYER2_READY = 'player2_ready';
   const STATE_PLAYING = 'playing';
   const STATE_FINISHED = 'finished';
 

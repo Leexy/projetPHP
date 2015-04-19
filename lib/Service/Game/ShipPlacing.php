@@ -84,6 +84,16 @@ class ShipPlacing
     return $currentCountInFleet < static::maxQuantityOfShipsForSize($ship->getSize());
   }
 
+  public static function getFleetSize()
+  {
+    return (
+      static::SHIPS_OF_SIZE_2 +
+      static::SHIPS_OF_SIZE_3 +
+      static::SHIPS_OF_SIZE_4 +
+      static::SHIPS_OF_SIZE_5
+    );
+  }
+
   /**
    * @param int $size
    * @return int Allowed quantity of ships of size $size in a fleet.

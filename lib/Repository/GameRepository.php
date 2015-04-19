@@ -63,7 +63,11 @@ SET playing_user_id = IF(playing_user_id = user1_id, user2_id, user1_id)
 WHERE id = :game_id;
 SQL;
 
-
+private static $UPGRADE_STATE_TO_READY = <<<'SQL'
+UPDATE games
+SET state = IF(state = :placing_state, :player_ready_state, :playing_state)
+WHERE id = :game_id;
+SQL;
 
   private static $SET_WINNER = <<<'SQL'
 UPDATE games SET state = :finished_state, winner_id = :winner_id
@@ -165,6 +169,21 @@ SQL;
     }
   }
 
+  public function upgradeStateToReady(Game $game, $readyPlayerIsPlayer1)
+  {
+    try {
+      $playerReadyState = $readyPlayerIsPlayer1 ? Game::STATE_PLAYER1_READY  : Game::STATE_PLAYER2_READY;
+      $stmt = $this->dbh->prepare(static::$UPGRADE_STATE_TO_READY);
+      $stmt->bindValue('placing_state', Game::STATE_PLACING, PDO::PARAM_STR);
+      $stmt->bindValue('playing_state', Game::STATE_PLAYING, PDO::PARAM_STR);
+      $stmt->bindValue('player_ready_state', $playerReadyState, PDO::PARAM_STR);
+      $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+    } catch(PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
   public function getVictoryCountFor(User $user)
   {
     try {
@@ -190,6 +209,11 @@ SQL;
     }
   }
 
+  /**
+   * @param User $user
+   * @return Game[]
+   * @throws RepositoryError
+   */
   public function fetchStartedFor(User $user)
   {
     $states = implode(', ', array_map([$this->dbh, 'quote'], Game::getStartedStates()));

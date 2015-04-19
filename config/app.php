@@ -8,7 +8,7 @@ $config['slim'] = [];
 $config['slim']['debug'] = false;
 
 $config['slim']['log.enabled'] = true;
-$config['slim']['log.level'] = \Slim\Log::INFO;
+$config['slim']['log.level'] = \Slim\Log::DEBUG;
 $config['slim']['log.writer'] = new \Slim\Logger\DateTimeFileWriter(['path' => 'log']);
 
 $viewEngine = new \Slim\Views\Twig();
