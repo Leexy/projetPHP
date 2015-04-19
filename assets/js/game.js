@@ -4,6 +4,7 @@ jQuery(function () {
   var POLLING_PERIOD = 2500;//ms
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
   var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
+  var draggingBoat = null;
   var boats = [
     {
       name: "submarine",
@@ -51,27 +52,27 @@ jQuery(function () {
       });
     }
   });
-  /* Execute callback once it's the player's turn */
+  /* Execute le callback quand c'est le tour du joueur */
   function waitForMyTurn(callback) {
     Polling.fetch({ url: GAME_STATE_URL }, function (game) {
       return game.play;
     }, callback);
   }
-  /* Execute callback once the state matches the specified one */
+  /* Execute le callback quand l'etat correspond a celui qui a ete specifie */
   function waitForGameState(state, callback) {
     Polling.fetch({ url: GAME_STATE_URL }, function (game) {
       return game.state === state;
     }, callback);
   }
   
-  /* init player's canvas */
+  /* initialise le canvas de la grille du joueur */
   function initPlayerGrid(){
-    //grid width and height
+    //hauteur et largeur de la grille
     var gridWidth = 400;
     var gridHeight = 400;
-    //padding around grid
+    //padding autour de la grille
     var p = 10;
-    //size of canvas
+    //taille du canvas
     var cw = gridWidth + (p*2) + 1;
     var ch = gridHeight + (p*2) + 201;
     $('#cvsPlayer').attr("width", cw);
@@ -79,80 +80,104 @@ jQuery(function () {
     drawGrid(ctxPlayer,gridWidth,gridHeight,p);
     drawBoats();
   }
-  /* init enemy's canvas*/
+  /* initialise le canvas de la grille ennemie */
   function initEnemyGrid(){
-    //grid width and height
+    //hauteur et largeur de la grille
     var gridWidth = 400;
     var gridHeight = 400;
-    //padding around grid
+    //padding autour de la grille
     var p = 10;
-    //size of canvas
+    //taille du canvas
     var cw = gridWidth + (p*2) + 1;
     var ch = gridHeight + (p*2) + 1;
     $('#cvsEnemy').attr("width", cw);
     $('#cvsEnemy').attr("height", ch);
     drawGrid(ctxEnemy,gridWidth,gridHeight,p);
   }
-  /* function that draw the grid */
+  /* Dessine la grille */
   function drawGrid(ctx,width,height,p){
     var arrayCoordX = ["a","b","c","d","e","f","g","h","i","j"]
     var arrayCoordY = ["1","2","3","4","5","6","7","8","9","10"]
     var i=0;
-    for (var x = 0; x <= width; x += 40) {
-      if(i<arrayCoordX.length){ // draw the letter coord
+    for (var x = 0; x <= width; x += 40){
+      if(i<arrayCoordX.length){ // dessine les lettres de la grille
         ctx.fillText(arrayCoordX[i], x+p+20, p)
         i++;
       }
-        //draw the vertical lines
+        //dessine les lignes verticales de la grille
         ctx.moveTo(0.5 + x + p, p);
         ctx.lineTo(0.5 + x + p, height + p);
       }
     var j=0;
-    for (var x = 0; x <= height; x += 40) {
-        if(j<arrayCoordY.length){// draw the number coord
+    for (var x = 0; x <= height; x += 40){
+        if(j<arrayCoordY.length){// dessine les numeros de grille
           ctx.fillText(arrayCoordY[j], 0, x+p+20);
           j++;
         }
-        //draw the horizontal lines
+        //dessine les lignes horizontales de la grille
         ctx.moveTo(p, 0.5 + x + p);
         ctx.lineTo(width + p, 0.5 + x + p);
     }
     ctx.strokeStyle = "black";
     ctx.stroke();
   }
-  /* function that draw all the boats */
+  /* dessine tous les bateaux */
   function drawBoats(){
-    for (var i=0; i<boats.length; i++)
-    {
+    for (var i=0; i<boats.length; i++){
       var b = boats[i];
       drawBoat(b);
     }
   }
-  /* function that draw specific boat */
+  /* dessine un bateau specifique */
   function drawBoat(boat){
     ctxPlayer.fillStyle = "rgb(48,48,48)";
     ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
   }
 
   function onUserAction(x,y){
-    console.log(x,y);
+    if(draggingBoat){
+      console.log(draggingBoat);
+      boats.forEach(function(boat) {
+        if(boat.x == draggingBoat.x && boat.y == draggingBoat.y){
+          boat.x = x;
+          boat.y = y;
+        }
+      });
+      draggingBoat.x = x;
+      draggingBoat.y = y;
+    }
+    initPlayerGrid();
   }
   
   function onMouseClick(x,y){
-    console.log(x,y);
+    boats.forEach(function(boat) {
+        if(x > boat.x && x < (boat.x + boat.width) && y > boat.y && y < (boat.y +boat.height)){
+            draggingBoat = {
+              name: boat.name,
+              x : boat.x,
+              y : boat.y,
+            }
+        }
+    });
   }
 
-  //init both grids
+  function releaseBoat(){
+    if (draggingBoat) {
+      draggingBoat = null;
+      initPlayerGrid();
+    }
+  }
+  //initialise les deux grilles de jeu
   initEnemyGrid();
   initPlayerGrid();
-  // called every time the mouse is moved
+  //appel a chaque fois que la souris bouge
   $('#cvsPlayer').mousemove( function (e) {
     var targetOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.clientX-targetOffset.left : e.offsetX;
     var y = e.offsetY === undefined ? e.clientY-targetOffset.top : e.offsetY;
     onUserAction(x,y);
   });
-  //called when mouse down
+  //appel au clic gauche
   $('#cvsPlayer').mousedown( function (e) {
     var targetOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.clientX-targetOffset.left : e.offsetX;
@@ -161,4 +186,6 @@ jQuery(function () {
       onMouseClick(x,y);
     }
   });
+  //relache le bateau
+  $('#cvsPlayer').mouseup(releaseBoat);
 });
