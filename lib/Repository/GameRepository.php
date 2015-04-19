@@ -197,6 +197,7 @@ SQL;
       $stmt = $this->dbh->prepare(sprintf(static::$FETCH_FOR_USER_INCLUDING_STATES, $states));
       $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
       $stmt->execute();
+      $result = [];
       foreach ($stmt->fetchAll() as $row) {
         $result[] = new Game($row);
       }
