@@ -1,9 +1,17 @@
 jQuery(function () {
   'use strict';
 
-  var POLLING_PERIOD = 2500;//ms
+  Polling.period = 100000;//ms
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
   var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
+  //hauteur et largeur de la grille
+  var gridWidth = 400;
+  var gridHeight = 400;
+  //padding autour de la grille
+  var p = 10;
+  //taille du canvas du player
+  var cw = gridWidth + (p*2) + 1;
+  var ch = gridHeight + (p*2) + 201;
   var draggingBoat = null;
   var boats = [
     {
@@ -67,26 +75,13 @@ jQuery(function () {
   
   /* initialise le canvas de la grille du joueur */
   function initPlayerGrid(){
-    //hauteur et largeur de la grille
-    var gridWidth = 400;
-    var gridHeight = 400;
-    //padding autour de la grille
-    var p = 10;
-    //taille du canvas
-    var cw = gridWidth + (p*2) + 1;
-    var ch = gridHeight + (p*2) + 201;
     $('#cvsPlayer').attr("width", cw);
     $('#cvsPlayer').attr("height", ch);
-    drawGrid(ctxPlayer,gridWidth,gridHeight,p);
+    drawGrid(ctxPlayer,cw,ch,p);
     drawBoats();
   }
   /* initialise le canvas de la grille ennemie */
   function initEnemyGrid(){
-    //hauteur et largeur de la grille
-    var gridWidth = 400;
-    var gridHeight = 400;
-    //padding autour de la grille
-    var p = 10;
     //taille du canvas
     var cw = gridWidth + (p*2) + 1;
     var ch = gridHeight + (p*2) + 1;
@@ -96,27 +91,30 @@ jQuery(function () {
   }
   /* Dessine la grille */
   function drawGrid(ctx,width,height,p){
+    // clear the canvas
+    ctx.fillStyle="white";
+    ctx.fillRect(0, 0, width, height);
     var arrayCoordX = ["a","b","c","d","e","f","g","h","i","j"]
     var arrayCoordY = ["1","2","3","4","5","6","7","8","9","10"]
     var i=0;
-    for (var x = 0; x <= width; x += 40){
+    for (var x = 0; x <= gridWidth; x += 40){
       if(i<arrayCoordX.length){ // dessine les lettres de la grille
         ctx.fillText(arrayCoordX[i], x+p+20, p)
         i++;
       }
         //dessine les lignes verticales de la grille
         ctx.moveTo(0.5 + x + p, p);
-        ctx.lineTo(0.5 + x + p, height + p);
+        ctx.lineTo(0.5 + x + p, gridHeight + p);
       }
     var j=0;
-    for (var x = 0; x <= height; x += 40){
+    for (var x = 0; x <= gridHeight; x += 40){
         if(j<arrayCoordY.length){// dessine les numeros de grille
           ctx.fillText(arrayCoordY[j], 0, x+p+20);
           j++;
         }
         //dessine les lignes horizontales de la grille
         ctx.moveTo(p, 0.5 + x + p);
-        ctx.lineTo(width + p, 0.5 + x + p);
+        ctx.lineTo(gridWidth + p, 0.5 + x + p);
     }
     ctx.strokeStyle = "black";
     ctx.stroke();
@@ -136,27 +134,17 @@ jQuery(function () {
 
   function onUserAction(x,y){
     if(draggingBoat){
-      console.log(draggingBoat);
-      boats.forEach(function(boat) {
-        if(boat.x == draggingBoat.x && boat.y == draggingBoat.y){
-          boat.x = x;
-          boat.y = y;
-        }
-      });
       draggingBoat.x = x;
       draggingBoat.y = y;
     }
-    initPlayerGrid();
+    drawGrid(ctxPlayer,cw,ch,p);
+    drawBoats();
   }
   
   function onMouseClick(x,y){
     boats.forEach(function(boat) {
         if(x > boat.x && x < (boat.x + boat.width) && y > boat.y && y < (boat.y +boat.height)){
-            draggingBoat = {
-              name: boat.name,
-              x : boat.x,
-              y : boat.y,
-            }
+            draggingBoat = boat;
         }
     });
   }
@@ -164,7 +152,8 @@ jQuery(function () {
   function releaseBoat(){
     if (draggingBoat) {
       draggingBoat = null;
-      initPlayerGrid();
+      drawGrid(ctxPlayer,gridWidth,gridHeight,p);
+      drawBoats();
     }
   }
   //initialise les deux grilles de jeu
