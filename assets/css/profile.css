@@ -6,6 +6,7 @@
     width: 640px; 
     border-collapse:collapse;
     border-spacing: 0;
+    margin: auto;
 }
 .profile-table td, th {
     border: 1px solid transparent; /* No more visible border */
