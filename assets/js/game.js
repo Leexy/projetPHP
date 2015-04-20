@@ -161,16 +161,16 @@ jQuery(function () {
   initPlayerGrid();
   //appel a chaque fois que la souris bouge
   $('#cvsPlayer').mousemove( function (e) {
-    var targetOffset = $(e.target).offset();
-    var x = e.offsetX === undefined ? e.clientX-targetOffset.left : e.offsetX;
-    var y = e.offsetY === undefined ? e.clientY-targetOffset.top : e.offsetY;
+    var cvsPlayerOffset = $(e.target).offset();
+    var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
+    var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
     onUserAction(x,y);
   });
   //appel au clic gauche
   $('#cvsPlayer').mousedown( function (e) {
-    var targetOffset = $(e.target).offset();
-    var x = e.offsetX === undefined ? e.clientX-targetOffset.left : e.offsetX;
-    var y = e.offsetY === undefined ? e.clientY-targetOffset.top : e.offsetY;
+    var cvsPlayerOffset = $(e.target).offset();
+    var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
+    var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
     if( e.which == 1 ){
       onMouseClick(x,y);
     }
