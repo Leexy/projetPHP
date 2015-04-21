@@ -191,9 +191,32 @@ jQuery(function () {
       drawBoats();
     }
   }
+  //verifie que tous les bateaux sont bien postionnes dans la grille
+  function boatInGrid(boat){
+    if(boat.orientation == "horizontal"){
+      if((boat.x + boat.width-10) <= gridWidth && (boat.y + boat.height-10) <= gridHeight){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+    else if(boat.orientation == "vertical"){
+      if((boat.x + boat.height-10) <= gridWidth  && (boat.y + boat.width-10) <= gridHeight){
+        return true;
+      }
+      else{
+        return false;
+      }
+    }
+  }
   //initialise les deux grilles de jeu
   initEnemyGrid();
   initPlayerGrid();
+  //onclick sur le bouton Ready, verifie que tous les bateaux sont bien postionnes dans la grille grace a la fonction boatInGrid
+  $('#btnReady').click(function () {
+    var positionOk = boats.every(boatInGrid);
+  });
   //appel a chaque fois que la souris bouge
   $('#cvsPlayer').mousemove(function (e) {
     var cvsPlayerOffset = $(e.target).offset();
