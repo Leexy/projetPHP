@@ -9,6 +9,7 @@ jQuery(function () {
   var gridHeight = 400;
   //padding autour de la grille
   var p = 10;
+  //taille d'une case
   var squareSize = 40;
   //taille du canvas du player
   var cw = gridWidth + (p*2) + 1;
@@ -167,7 +168,6 @@ jQuery(function () {
       draggingBoat.gridY = Math.ceil(draggingBoat.y/squareSize);
       draggingBoat.x = gridToCanvas(draggingBoat.gridX);
       draggingBoat.y = gridToCanvas(draggingBoat.gridY);
-      console.log(draggingBoat)
     }
     drawGrid(ctxPlayer,cw,ch,p);
     drawBoats();
