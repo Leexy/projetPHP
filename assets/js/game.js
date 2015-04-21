@@ -9,6 +9,7 @@ jQuery(function () {
   var gridHeight = 400;
   //padding autour de la grille
   var p = 10;
+  var squareSize = 40;
   //taille du canvas du player
   var cw = gridWidth + (p*2) + 1;
   var ch = gridHeight + (p*2) + 201;
@@ -74,14 +75,14 @@ jQuery(function () {
   }
   
   /* initialise le canvas de la grille du joueur */
-  function initPlayerGrid(){
+  function initPlayerGrid() {
     $('#cvsPlayer').attr("width", cw);
     $('#cvsPlayer').attr("height", ch);
     drawGrid(ctxPlayer,cw,ch,p);
     drawBoats();
   }
   /* initialise le canvas de la grille ennemie */
-  function initEnemyGrid(){
+  function initEnemyGrid() {
     //taille du canvas
     var cw = gridWidth + (p*2) + 1;
     var ch = gridHeight + (p*2) + 1;
@@ -90,7 +91,7 @@ jQuery(function () {
     drawGrid(ctxEnemy,gridWidth,gridHeight,p);
   }
   /* Dessine la grille */
-  function drawGrid(ctx,width,height,p){
+  function drawGrid(ctx,width,height,p) {
     // clear the canvas
     ctx.fillStyle="white";
     ctx.fillRect(0, 0, width, height);
@@ -98,20 +99,12 @@ jQuery(function () {
     var arrayCoordY = ["1","2","3","4","5","6","7","8","9","10"]
     var i=0;
     for (var x = 0; x <= gridWidth; x += 40){
-      if(i<arrayCoordX.length){ // dessine les lettres de la grille
-        ctx.fillText(arrayCoordX[i], x+p+20, p)
-        i++;
-      }
         //dessine les lignes verticales de la grille
         ctx.moveTo(0.5 + x + p, p);
         ctx.lineTo(0.5 + x + p, gridHeight + p);
       }
     var j=0;
     for (var x = 0; x <= gridHeight; x += 40){
-        if(j<arrayCoordY.length){// dessine les numeros de grille
-          ctx.fillText(arrayCoordY[j], 0, x+p+20);
-          j++;
-        }
         //dessine les lignes horizontales de la grille
         ctx.moveTo(p, 0.5 + x + p);
         ctx.lineTo(gridWidth + p, 0.5 + x + p);
@@ -120,19 +113,19 @@ jQuery(function () {
     ctx.stroke();
   }
   /* dessine tous les bateaux */
-  function drawBoats(){
+  function drawBoats() {
     for (var i=0; i<boats.length; i++){
       var b = boats[i];
       drawBoat(b);
     }
   }
   /* dessine un bateau specifique */
-  function drawBoat(boat){
+  function drawBoat(boat) {
     ctxPlayer.fillStyle = "rgb(48,48,48)";
     ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
   }
 
-  function onUserAction(x,y){
+  function onUserAction(x,y) {
     if(draggingBoat){
       draggingBoat.x = x;
       draggingBoat.y = y;
@@ -141,16 +134,33 @@ jQuery(function () {
     drawBoats();
   }
   
-  function onMouseClick(x,y){
+  function onMouseClick(x,y) {
     boats.forEach(function(boat) {
         if(x > boat.x && x < (boat.x + boat.width) && y > boat.y && y < (boat.y +boat.height)){
             draggingBoat = boat;
         }
     });
   }
-
-  function releaseBoat(){
+  //place correctement le bateau dans la case
+  function placeShipInSquare() {
+    if(draggingBoat){
+      draggingBoat.gridX = Math.ceil(draggingBoat.x/squareSize);
+      draggingBoat.gridY = Math.ceil(draggingBoat.y/squareSize);
+      draggingBoat.x = gridToCanvas(draggingBoat.gridX);
+      draggingBoat.y = gridToCanvas(draggingBoat.gridY);
+      console.log(draggingBoat)
+    }
+    drawGrid(ctxPlayer,cw,ch,p);
+    drawBoats();
+  }
+  //converti les numeros de case en pixel pour le positionnement
+  function gridToCanvas(gridPos) {
+    return 1 + p + (gridPos - 1) * squareSize;
+  }
+  // fonction appele quand la souris est relachee
+  function releaseBoat() {
     if (draggingBoat) {
+      placeShipInSquare();
       draggingBoat = null;
       drawGrid(ctxPlayer,gridWidth,gridHeight,p);
       drawBoats();
@@ -160,14 +170,14 @@ jQuery(function () {
   initEnemyGrid();
   initPlayerGrid();
   //appel a chaque fois que la souris bouge
-  $('#cvsPlayer').mousemove( function (e) {
+  $('#cvsPlayer').mousemove(function (e) {
     var cvsPlayerOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
     var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
     onUserAction(x,y);
   });
   //appel au clic gauche
-  $('#cvsPlayer').mousedown( function (e) {
+  $('#cvsPlayer').mousedown(function (e) {
     var cvsPlayerOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
     var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
