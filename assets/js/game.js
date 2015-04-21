@@ -1,6 +1,6 @@
 jQuery(function () {
   'use strict';
-
+  $('body').on('contextmenu', 'canvas', function (){ return false; }); // desactive le clic droit sur le canvas
   Polling.period = 100000;//ms
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
   var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
