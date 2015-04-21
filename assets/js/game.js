@@ -21,6 +21,7 @@ jQuery(function () {
       y: 420,
       width: 79,
       height: 39,
+      orientation: "horizontal",
     },
     {
       name: "destroyer",
@@ -28,6 +29,7 @@ jQuery(function () {
       y: 470,
       width: 119,
       height: 39,
+      orientation: "horizontal",
     },
     {
       name: "destroyer",
@@ -35,6 +37,7 @@ jQuery(function () {
       y: 470,
       width: 119,
       height: 39,
+      orientation: "horizontal",
     },
     {
       name: "cruiser",
@@ -42,6 +45,7 @@ jQuery(function () {
       y: 520,
       width: 159,
       height: 39,
+      orientation: "horizontal",
     },
     {
       name: "battleship",
@@ -49,6 +53,7 @@ jQuery(function () {
       y: 570,
       width: 199,
       height: 39,
+      orientation: "horizontal",
     },
   ];
 
@@ -122,9 +127,14 @@ jQuery(function () {
   /* dessine un bateau specifique */
   function drawBoat(boat) {
     ctxPlayer.fillStyle = "rgb(48,48,48)";
-    ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
+    if(boat.orientation == "horizontal"){
+      ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
+    }
+    else if(boat.orientation == "vertical"){
+      ctxPlayer.fillRect(boat.x, boat.y,boat.height,boat.width);
+    }
   }
-
+  //change les coord du bateau onmousemove
   function onUserAction(x,y) {
     if(draggingBoat){
       draggingBoat.x = x;
@@ -133,13 +143,22 @@ jQuery(function () {
     drawGrid(ctxPlayer,cw,ch,p);
     drawBoats();
   }
-  
-  function onMouseClick(x,y) {
-    boats.forEach(function(boat) {
-        if(x > boat.x && x < (boat.x + boat.width) && y > boat.y && y < (boat.y +boat.height)){
-            draggingBoat = boat;
+  //fonction qui renvoie le bateau clique
+  function getPointedBoat(x,y){
+    var selectedBoat;
+    boats.forEach(function (boat) {
+      if(boat.orientation == "horizontal"){
+        if(x > boat.x && x < (boat.x + boat.width) && y > boat.y && y < (boat.y + boat.height)){
+          selectedBoat = boat;
         }
+      }
+      else if(boat.orientation == "vertical"){
+        if(x > boat.x && x < (boat.x + boat.height) && y > boat.y && y < (boat.y + boat.width)){
+          selectedBoat = boat;
+        }
+      }
     });
+    return selectedBoat;
   }
   //place correctement le bateau dans la case
   function placeShipInSquare() {
@@ -157,7 +176,13 @@ jQuery(function () {
   function gridToCanvas(gridPos) {
     return 1 + p + (gridPos - 1) * squareSize;
   }
-  // fonction appele quand la souris est relachee
+  //fonction qui transforme le bateau horizontal en vertical
+  function changeOrientation(boat){
+      boat.orientation = boat.orientation == "vertical"?"horizontal":"vertical";
+      drawGrid(ctxPlayer,gridWidth,gridHeight,p);
+      drawBoats();
+  }
+  //fonction appele quand la souris est relachee
   function releaseBoat() {
     if (draggingBoat) {
       placeShipInSquare();
@@ -176,13 +201,19 @@ jQuery(function () {
     var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
     onUserAction(x,y);
   });
-  //appel au clic gauche
+  //appel au clic gauche (drag & drop du bateau) et clic droit (changement d'orientation)
   $('#cvsPlayer').mousedown(function (e) {
     var cvsPlayerOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
     var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
+    var pointedBoat = getPointedBoat(x,y);
     if( e.which == 1 ){
-      onMouseClick(x,y);
+      draggingBoat = pointedBoat;
+    }
+    else if( e.which == 3){
+      if(pointedBoat){
+        changeOrientation(pointedBoat);
+      }
     }
   });
   //relache le bateau
