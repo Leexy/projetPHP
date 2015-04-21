@@ -216,6 +216,12 @@ jQuery(function () {
   //onclick sur le bouton Ready, verifie que tous les bateaux sont bien postionnes dans la grille grace a la fonction boatInGrid
   $('#btnReady').click(function () {
     var positionOk = boats.every(boatInGrid);
+    if(!positionOk){
+      $( "#errorMsg" ).html( "You should correctly place ALL your boats ! ;)" );
+    }
+    else{
+      $( "#errorMsg" ).html( "" );
+    }
   });
   //appel a chaque fois que la souris bouge
   $('#cvsPlayer').mousemove(function (e) {
