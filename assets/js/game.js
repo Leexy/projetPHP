@@ -217,10 +217,10 @@ jQuery(function () {
   $('#btnReady').click(function () {
     var positionOk = boats.every(boatInGrid);
     if(!positionOk){
-      $( "#errorMsg" ).html( " <div class=\"alert-box error\"><span>error: </span>You should correctly place ALL your boats ! ;).</div>" );
+      $( "#alert-msg" ).html( " <div class=\"alert-box error\"><span>error: </span>You should correctly place ALL your boats ! ;).</div>" );
     }
     else{
-      $( "#errorMsg" ).html( "" );
+      $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span>You have place all your boats ! Wait till your opponent is ready now ;).</div>" );
     }
   });
   //appel a chaque fois que la souris bouge

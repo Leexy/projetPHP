@@ -17,7 +17,7 @@ var GAME_STATE = {{ states|json_encode|raw }};
 
 {% block content %}
   <div id="game">
-  <p id="errorMsg"></p>
+  <p id="alert-msg"></p>
     {% if opponent is empty %}
       <div class="alert-box notice"><span>notice: </span>Be patient, your opponent will come soon !</div>
     {% else %}
