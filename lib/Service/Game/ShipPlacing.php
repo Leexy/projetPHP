@@ -32,7 +32,7 @@ class ShipPlacing
 
   public function handle(Ship $ship)
   {
-    if (!in_array($this->game->getState(), [Game::STATE_WAITING, Game::STATE_PLACING])) {
+    if (!in_array($this->game->getState(), [Game::STATE_WAITING, Game::STATE_PLACING, Game::STATE_PLAYER1_READY, Game::STATE_PLAYER2_READY])) {
       throw ShipPlacingError::invalidGameState($this->game->getState());
     }
     if (!$this->isShipInBoundaries($ship)) {
