@@ -63,16 +63,6 @@ jQuery(function () {
     },
   ];
 
-  Battleship.api.waitForGameState(Battleship.state.playing, function (error, game) {
-    if (game.play) {
-      console.log('This is my turn!');
-    } else {
-      Battleship.api.waitForMyTurn(function (error, game) {
-        console.log('This is my turn!');
-      });
-    }
-  });
-
   /* initialise le canvas de la grille du joueur */
   function initPlayerGrid() {
     $('#cvsPlayer').attr("width", cw);
@@ -214,6 +204,18 @@ jQuery(function () {
     }
     else{
       $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span>You have place all your boats ! Wait till your opponent is ready now ;).</div>" );
+      $("#btnReady").disabled = true;
+      Battleship.api.placeShips(boats.map(boatToShipModel), function(){
+          Battleship.api.waitForGameState(Battleship.state.playing, function (error, game) {
+            if (game.play) {
+              $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
+            } else {
+              Battleship.api.waitForMyTurn(function (error, game) {
+                $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
+              });
+            }
+          });
+      });
     }
   });
   //appel a chaque fois que la souris bouge
