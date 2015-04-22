@@ -203,7 +203,7 @@ $app->post('/games', function () use($app) {
     $gameId = $gameRepository->createFor($app->user);
     $app->redirect($app->urlFor('game', ['id' => $gameId]));
   } catch (\Repository\Error\GameCreationLimit $error) {
-    $app->flash('error', "Heyy! You already have a game awaiting! Please be patient. :)");
+    $app->flashNow('error', "Heyy! You already have a game awaiting! Please be patient. :)");
     $app->render('games.html.twig', ['games' => $gameRepository->fetchWaiting()]);
   }
 })->name('games.create');
