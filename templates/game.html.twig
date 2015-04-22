@@ -25,12 +25,12 @@
 
 {% block content %}
   <div id="game">
-  <p id="alert-msg"></p>
     {% if opponent is empty %}
       <div class="alert-box notice"><span>notice: </span>Be patient, your opponent will come soon !</div>
     {% else %}
       <p>
         You're playing with <strong>{{ opponent.getDisplayName() }}</strong>
+        <p id="alert-msg"></p>
         <div class="alert-box notice"><span>notice: </span>You can place your boats with drag & drop. If you want to change the orientation, click <strong>right</strong> with the mouse <strong>on</strong> the boat !<br/> When you've placed them all, click on the <strong>"Ready"</strong> button.</div>
         <button id="btnReady">Ready</button>
       </p>
