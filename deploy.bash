@@ -19,7 +19,7 @@ cd
 chown -R battleship:www-data "${RELEASE_DIR}" &&
 chmod g+x "${RELEASE_DIR}" &&
 chmod g+r -R "${RELEASE_DIR}" &&
-ln -nfs "${RELEASE_DIR}" www
+ln -nfs "${RELEASE_DIR}" www &&
 find releases -maxdepth 1 -mtime +7 -exec rm -rf {} +
 SCRIPT
 
