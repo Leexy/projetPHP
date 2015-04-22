@@ -159,6 +159,15 @@ jQuery(function () {
   function gridToCanvas(gridPos) {
     return 1 + p + (gridPos - 1) * squareSize;
   }
+  //transforme les bateaux en "ship" pour correspondre au modele serveur
+  function boatToShipModel(boat){
+    return {
+      x: boat.gridX,
+      y: boat.gridY,
+      size: boat.size,
+      orientation: boat.orientation.toUpperCase()
+    };
+  }
   //fonction qui transforme le bateau horizontal en vertical
   function changeOrientation(boat){
       boat.orientation = boat.orientation == "vertical"?"horizontal":"vertical";
