@@ -80,7 +80,7 @@ SQL;
       $stmt = $this->dbh->prepare(static::$TRY_TO_ADD_USER_QUERY);
       $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
       $stmt->bindValue('user2_id', $user->getId(), PDO::PARAM_INT);
-      $stmt->bindValue('state', Game::STATE_PLAYING, PDO::PARAM_STR);
+      $stmt->bindValue('state', Game::STATE_PLACING, PDO::PARAM_STR);
       $affectedRows = $stmt->execute();
       if (!$affectedRows) {
         throw new FullGame();
