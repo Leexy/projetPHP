@@ -26,6 +26,11 @@ class Game extends Base
     return $user->getId() === $this->getPlayingUserId();
   }
 
+  public function setState($state)
+  {
+    $this->data['state'] = $state;
+  }
+
   public function getState()
   {
     return $this->data['state'];
@@ -40,6 +45,12 @@ class Game extends Base
   {
     return $this->data['user2_id'];
   }
+
+  public function setWinnerId($winnerId)
+  {
+    $this->data['winner_id'] = $winnerId;
+  }
+
   public function getOpponentIdOf(User $player)
   {
     return $player->getId() === $this->getUser1Id() ?
