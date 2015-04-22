@@ -16,6 +16,21 @@ jQuery(function () {
       return game.play;
     }, callback);
   };
+
+  api.placeShip = function postPlaceShip(ship, callback) {
+    jQuery.ajax({
+      contentType: 'application/json',
+      data: JSON.stringify(ship),
+      success: callback,
+      error: function () {
+        postPlaceShip(ship, callback);
+      },
+      processData: false,
+      type: 'POST',
+      url: Battleship.url.placeShip
+    });
+  };
+
   // envoi une requete pour le hit
   api.hit = function postHit(hit, callback) {
     jQuery.ajax({
