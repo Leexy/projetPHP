@@ -32,8 +32,7 @@ $app->post('/games/:id/place-ship', function ($gameId) use($app) {
   $shipPlacingService->setOwner($app->user);
   $shipPlacingService->setShipRepository(new ShipRepository($app->dbh));
   try {
-    $result = $shipPlacingService->handle($ship);
-    $app->response->setBody(json_encode($result));
+    $shipPlacingService->handle($ship);
   } catch (ShipPlacingError $error) {
     switch ($error->getCode()) {
     case ShipPlacingError::CODE_INVALID_GAME_STATE:
