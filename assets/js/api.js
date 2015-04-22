@@ -23,7 +23,8 @@ jQuery(function () {
       data: JSON.stringify(ship),
       success: callback,
       error: function () {
-        api.placeShip(ship, callback);
+        // api.placeShip(ship, callback);
+        console.error(arguments);
       },
       processData: false,
       type: 'POST',
@@ -37,6 +38,20 @@ jQuery(function () {
     }, callback);
   };
 
+  api.ready = function postReady(callback) {
+    jQuery.ajax({
+      contentType: 'application/json',
+      success: callback,
+      error: function () {
+        // api.ready(callback);
+        console.error(arguments);
+      },
+      processData: false,
+      type: 'POST',
+      url: Battleship.url.ready
+    });
+  };
+
   // envoi une requete pour le hit
   api.hit = function postHit(hit, callback) {
     jQuery.ajax({
@@ -44,7 +59,8 @@ jQuery(function () {
       data: JSON.stringify(hit),
       success: callback,
       error: function () {
-        postHit(hit, callback);
+        // postHit(hit, callback);
+        console.error(arguments);
       },
       processData: false,
       type: 'POST',

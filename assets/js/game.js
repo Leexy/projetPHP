@@ -1,7 +1,6 @@
 jQuery(function () {
   'use strict';
   $('body').on('contextmenu', 'canvas', function (){ return false; }); // desactive le clic droit sur le canvas
-  Polling.period = 100000;//ms
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
   var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
   //hauteur et largeur de la grille
@@ -206,6 +205,7 @@ jQuery(function () {
   initEnemyGrid();
   initPlayerGrid();
   //onclick sur le bouton Ready, verifie que tous les bateaux sont bien postionnes dans la grille grace a la fonction boatInGrid
+  //et envoi de la requete au serveur
   $('#btnReady').click(function () {
     var positionOk = boats.every(boatInGrid);
     if(!positionOk){
@@ -213,8 +213,9 @@ jQuery(function () {
     }
     else{
       $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span>You have place all your boats ! Wait till your opponent is ready now ;).</div>" );
-      $("#btnReady").disabled = true;
+      $("#btnReady").attr('disabled',true);
       Battleship.api.placeShips(boats.map(boatToShipModel), function(){
+        Battleship.api.ready(function(){
           Battleship.api.waitForGameState(Battleship.state.playing, function (error, game) {
             if (game.play) {
               $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
@@ -224,6 +225,7 @@ jQuery(function () {
               });
             }
           });
+        });
       });
     }
   });

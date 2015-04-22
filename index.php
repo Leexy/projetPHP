@@ -33,6 +33,7 @@ $app->post('/games/:id/place-ship', function ($gameId) use($app) {
   $shipPlacingService->setShipRepository(new ShipRepository($app->dbh));
   try {
     $shipPlacingService->handle($ship);
+    $app->response->setBody(json_encode(['success' => true]));
   } catch (ShipPlacingError $error) {
     switch ($error->getCode()) {
     case ShipPlacingError::CODE_INVALID_GAME_STATE:
@@ -83,6 +84,7 @@ $app->post('/games/:id/ready', function ($gameId) use($app) {
   try {
     $gameReadyService->handle();
     $app->response->setStatus(200);
+    $app->response->setBody(json_encode(['success' => true]));
   } catch (ReadyError $error) {
     switch ($error->getCode()) {
     case ReadyError::CODE_USER_NOT_IN_GAME:

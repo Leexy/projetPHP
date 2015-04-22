@@ -65,9 +65,9 @@ class ShipPlacing
       $isShipInBoundaries = false;
     } else if ($ship->getY() < 1 or $ship->getY() > 10) {
       $isShipInBoundaries = false;
-    } else if ($ship->isHorizontal() and $ship->getX() > (10 - $ship->getSize() - 1)) {
+    } else if ($ship->isHorizontal() and $ship->getX() > (10 - ($ship->getSize() - 1))) {
       $isShipInBoundaries = false;
-    } else if ($ship->isVertical() and $ship->getY() > (10 - $ship->getSize() - 1)) {
+    } else if ($ship->isVertical() and $ship->getY() > (10 - ($ship->getSize() - 1))) {
       $isShipInBoundaries = false;
     }
     return $isShipInBoundaries;

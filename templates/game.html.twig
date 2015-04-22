@@ -14,6 +14,7 @@
   Battleship.url = {
     state: {{ urlFor('game.state', { "id": game.id })|json_encode|raw }},
     placeShip: {{ urlFor('games.place-ship', { "id": game.id })|json_encode|raw }},
+    ready: {{ urlFor('game.ready', { "id": game.id })|json_encode|raw }},
     hit: {{ urlFor('game.hit', { "id": game.id })|json_encode|raw }}
   };
   Battleship.state = {{ states|json_encode|raw }};
