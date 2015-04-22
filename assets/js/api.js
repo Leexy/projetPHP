@@ -17,6 +17,12 @@ jQuery(function () {
     }, callback);
   };
 
+  api.placeShips = function placeShips(ships, callback) {
+    async.each(ships, function (ship, done) {
+      postPlaceShip(ship, function () { done() });
+    }, callback);
+  };
+
   api.placeShip = function postPlaceShip(ship, callback) {
     jQuery.ajax({
       contentType: 'application/json',
