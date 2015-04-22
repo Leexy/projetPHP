@@ -16,7 +16,7 @@ jQuery(function () {
       return game.play;
     }, callback);
   };
-
+  // envoi une requete pour le hit
   api.hit = function postHit(hit, callback) {
     jQuery.ajax({
       contentType: 'application/json',
