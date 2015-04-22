@@ -22,6 +22,7 @@ jQuery(function () {
       y: 420,
       width: 79,
       height: 39,
+      size: 2,
       orientation: "horizontal",
     },
     {
@@ -30,6 +31,7 @@ jQuery(function () {
       y: 470,
       width: 119,
       height: 39,
+      size: 3,
       orientation: "horizontal",
     },
     {
@@ -38,6 +40,7 @@ jQuery(function () {
       y: 470,
       width: 119,
       height: 39,
+      size: 3,
       orientation: "horizontal",
     },
     {
@@ -46,6 +49,7 @@ jQuery(function () {
       y: 520,
       width: 159,
       height: 39,
+      size: 4,
       orientation: "horizontal",
     },
     {
@@ -54,6 +58,7 @@ jQuery(function () {
       y: 570,
       width: 199,
       height: 39,
+      size: 5,
       orientation: "horizontal",
     },
   ];
