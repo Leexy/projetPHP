@@ -16,25 +16,25 @@ jQuery(function () {
       return game.play;
     }, callback);
   };
-
-  api.placeShips = function placeShips(ships, callback) {
-    async.each(ships, function (ship, done) {
-      postPlaceShip(ship, function () { done() });
-    }, callback);
-  };
-
+  //envoi une requete de placement de bateau
   api.placeShip = function postPlaceShip(ship, callback) {
     jQuery.ajax({
       contentType: 'application/json',
       data: JSON.stringify(ship),
       success: callback,
       error: function () {
-        postPlaceShip(ship, callback);
+        api.placeShip(ship, callback);
       },
       processData: false,
       type: 'POST',
       url: Battleship.url.placeShip
     });
+  };
+  //envoi des requetes de placement de bateaux en parallele 
+  api.placeShips = function placeShips(ships, callback) {
+    async.each(ships, function (ship, done) {
+      api.placeShip(ship, function () { done() });
+    }, callback);
   };
 
   // envoi une requete pour le hit
