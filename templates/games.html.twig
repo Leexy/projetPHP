@@ -13,6 +13,7 @@
   {% if games is empty %}
     <div class="alert-box notice"><span>notice: </span>There is no game. You should create one!</div>
   {% else %}
+    <div class="alert-box notice"><span>notice: </span>If you want to play, you can join one game or more !<br/> You can also create a game : click on the <strong>Create a new game!</strong> button, but don't forget that you can only create one game at a time.</div>
     <ul>
     {% for game in games %}
       <li>
