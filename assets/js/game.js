@@ -63,28 +63,16 @@ jQuery(function () {
     },
   ];
 
-  waitForGameState(GAME_STATE.PLAYING, function (error, game) {
+  Battleship.api.waitForGameState(Battleship.state.playing, function (error, game) {
     if (game.play) {
       console.log('This is my turn!');
     } else {
-      waitForMyTurn(function (error, game) {
+      Battleship.api.waitForMyTurn(function (error, game) {
         console.log('This is my turn!');
       });
     }
   });
-  /* Execute le callback quand c'est le tour du joueur */
-  function waitForMyTurn(callback) {
-    Polling.fetch({ url: GAME_STATE_URL }, function (game) {
-      return game.play;
-    }, callback);
-  }
-  /* Execute le callback quand l'etat correspond a celui qui a ete specifie */
-  function waitForGameState(state, callback) {
-    Polling.fetch({ url: GAME_STATE_URL }, function (game) {
-      return game.state === state;
-    }, callback);
-  }
-  
+
   /* initialise le canvas de la grille du joueur */
   function initPlayerGrid() {
     $('#cvsPlayer').attr("width", cw);

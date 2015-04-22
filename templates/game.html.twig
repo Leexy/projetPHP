@@ -8,10 +8,18 @@
 {% block js %}
 {{ parent() }}
 <script>
-var GAME_STATE_URL = {{ urlFor('game.state', { "id": game.id })|json_encode|raw }};
-var GAME_STATE = {{ states|json_encode|raw }};
+(function () {
+  'use strict';
+  var Battleship = window.Battleship = {};
+  Battleship.url = {
+    state: {{ urlFor('game.state', { "id": game.id })|json_encode|raw }},
+    hit: {{ urlFor('game.hit', { "id": game.id })|json_encode|raw }}
+  };
+  Battleship.state = {{ states|json_encode|raw }};
+}());
 </script>
 <script src="/assets/js/polling.js"></script>
+<script src="/assets/js/api.js"></script>
 <script src="/assets/js/game.js"></script>
 {% endblock %}
 

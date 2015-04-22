@@ -146,10 +146,10 @@ $app->get('/games/:id', function ($gameId) use($app) {
     'user' => $user,
     'opponent' => $opponent,
     'states' => [
-      'WAITING' => Game::STATE_WAITING,
-      'PLACING' => Game::STATE_PLACING,
-      'PLAYING' => Game::STATE_PLAYING,
-      'FINISHED' => Game::STATE_FINISHED,
+      'waiting' => Game::STATE_WAITING,
+      'placing' => Game::STATE_PLACING,
+      'playing' => Game::STATE_PLAYING,
+      'finished' => Game::STATE_FINISHED,
     ],
   ]);
 })->name('game');
