@@ -5,12 +5,13 @@
 {% block content %}
   <div id="games">
   {% if flash.error is defined %}
-    <p class="error">
+  <div class="alert-box error"><span>error: </span>
       {{ flash.error }}
-    </p>
+  </div>
+
   {% endif %}
   {% if games is empty %}
-    <p>There is no game. You should create one!</p>
+    <div class="alert-box notice"><span>notice: </span>There is no game. You should create one!</div>
   {% else %}
     <ul>
     {% for game in games %}

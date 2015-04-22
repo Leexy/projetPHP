@@ -217,7 +217,7 @@ jQuery(function () {
   $('#btnReady').click(function () {
     var positionOk = boats.every(boatInGrid);
     if(!positionOk){
-      $( "#errorMsg" ).html( "You should correctly place ALL your boats ! ;)" );
+      $( "#errorMsg" ).html( " <div class=\"alert-box error\"><span>error: </span>You should correctly place ALL your boats ! ;).</div>" );
     }
     else{
       $( "#errorMsg" ).html( "" );
