@@ -60,6 +60,7 @@ class Ship extends Base
 
   public function isHitBy(Hit $hit)
   {
+    // TODO: check this method -> why did not the ship got hit? 
     $isHit = true;
     if ($this->isHorizontal()) {
       $isHit = (

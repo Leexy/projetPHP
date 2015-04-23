@@ -14,6 +14,8 @@ jQuery(function () {
   var cw = gridWidth + (p*2) + 1;
   var ch = gridHeight + (p*2) + 201;
   var draggingBoat = null;
+  var thisIsMyTurn = false;
+  var hitsHistory = [];
   var boats = [
     {
       name: "submarine",
@@ -75,8 +77,12 @@ jQuery(function () {
     previousGameStates: '*',
     currentGameStates: [Battleship.gameState.playing],
     proceed: function (game) {
-      if (game.play) {
-        $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
+      $('#placing-instructions, #btnReady').remove();
+      thisIsMyTurn = game.play;
+      if (thisIsMyTurn) {
+        $( "#alert-msg" ).html( "<div class=\"alert-box warning\">This is your turn.</div>" );
+      } else {
+        $( "#alert-msg" ).html( "<div class=\"alert-box notice\">Your opponent is playing.</div>" );
       }
     }
   });
@@ -167,8 +173,8 @@ jQuery(function () {
   //place correctement le bateau dans la case
   function placeShipInSquare() {
     if(draggingBoat){
-      draggingBoat.gridX = Math.ceil(draggingBoat.x/squareSize);
-      draggingBoat.gridY = Math.ceil(draggingBoat.y/squareSize);
+      draggingBoat.gridX = canvasToGrid(draggingBoat.x);
+      draggingBoat.gridY = canvasToGrid(draggingBoat.y);
       draggingBoat.x = gridToCanvas(draggingBoat.gridX);
       draggingBoat.y = gridToCanvas(draggingBoat.gridY);
     }
@@ -178,6 +184,10 @@ jQuery(function () {
   //converti les numeros de case en pixel pour le positionnement
   function gridToCanvas(gridPos) {
     return 1 + p + (gridPos - 1) * squareSize;
+  }
+  //converti les pixels en numeros de case
+  function canvasToGrid(canvasPos) {
+    return Math.ceil(canvasPos / squareSize);
   }
   //transforme les bateaux en "ship" pour correspondre au modele serveur
   function boatToShipModel(boat){
@@ -267,4 +277,39 @@ jQuery(function () {
   });
   //relache le bateau
   $('#cvsPlayer').mouseup(releaseBoat);
+
+  //appel au clic gauche : lancement d'un hit
+  $('#cvsEnemy').mouseup(function (e) {
+    if (!thisIsMyTurn) {
+      console.log('This is not my turn!');
+      return;
+    }
+    var cvsOffset = $(e.target).offset();
+    var x = e.offsetX === undefined ? e.pageX-cvsOffset.left : e.offsetX;
+    var y = e.offsetY === undefined ? e.pageY-cvsOffset.top : e.offsetY;
+    if( e.which == 1 ){
+      var hit = {
+        x: canvasToGrid(x),
+        y: canvasToGrid(y)
+      };
+      if (hit.x < 1 || hit.x > 10 || hit.y < 1 || hit.y > 10) {
+        console.log('Click ignored (out of grid)');
+        return;
+      }
+      if (hitsHistory.some(function (historyHit) { return hit.x === historyHit.x && hit.y === historyHit.y; })) {
+        console.log('This hit has already been sent');
+        return;
+      }
+      thisIsMyTurn = false;
+      Battleship.api.hit(hit, function (error, result) {
+        console.log('Hit:', result);
+        if (error) {
+          console.error(error);
+          thisIsMyTurn = true;
+        } else {
+          hitsHistory.push(hit);
+        }
+      });
+    }
+  });
 });

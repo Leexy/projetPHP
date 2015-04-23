@@ -57,10 +57,11 @@ jQuery(function () {
     jQuery.ajax({
       contentType: 'application/json',
       data: JSON.stringify(hit),
-      success: callback,
-      error: function () {
-        // postHit(hit, callback);
-        console.error(arguments);
+      success: function (data, status, jqXhr) {
+        callback(null, data);
+      },
+      error: function (jqXhr, jqStatus, httpStatus) {
+        callback(httpStatus);
       },
       processData: false,
       type: 'POST',
