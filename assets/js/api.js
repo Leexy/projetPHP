@@ -3,15 +3,8 @@ jQuery(function () {
 
   var api = window.Battleship.api = {};
 
-  /* Execute le callback quand l'état correspond à celui qui a été spécifié */
-  api.waitForGameState = function waitForGameState(states, callback) {
-    Polling.fetch({ url: Battleship.url.state }, function (game) {
-      return states.indexOf(game.state) !== -1;
-    }, callback);
-  };
-
   //recupere un etat
-  api.fetchGameState = function fetchGameState(callback){
+  api.fetchState = function fetchState(callback){
     jQuery.ajax({
       success: callback,
       error: function () {
@@ -22,12 +15,6 @@ jQuery(function () {
     });
   };
 
-  /* Execute le callback quand c'est le tour du joueur */
-  api.waitForMyTurn = function waitForMyTurn(callback) {
-    Polling.fetch({ url: Battleship.url.state }, function (game) {
-      return game.play;
-    }, callback);
-  };
   //envoi une requete de placement de bateau
   api.placeShip = function postPlaceShip(ship, callback) {
     jQuery.ajax({
@@ -43,6 +30,7 @@ jQuery(function () {
       url: Battleship.url.placeShip
     });
   };
+
   //envoi des requetes de placement de bateaux en parallele 
   api.placeShips = function placeShips(ships, callback) {
     async.each(ships, function (ship, done) {

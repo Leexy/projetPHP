@@ -15,14 +15,15 @@
     state: {{ urlFor('game.state', { "id": game.id })|json_encode|raw }},
     placeShip: {{ urlFor('games.place-ship', { "id": game.id })|json_encode|raw }},
     ready: {{ urlFor('game.ready', { "id": game.id })|json_encode|raw }},
-    hit: {{ urlFor('game.hit', { "id": game.id })|json_encode|raw }}
+    hit: {{ urlFor('game.hit', { "id": game.id })|json_encode|raw }},
   };
-  Battleship.state = {{ states|json_encode|raw }};
+  Battleship.gameState = {{ states|json_encode|raw }};
 }());
 </script>
 <script src="/assets/js/polling.js"></script>
 <script src="/assets/js/api.js"></script>
 <script src="/assets/js/async.js"></script>
+<script src="/assets/js/battleship.js"></script>
 <script src="/assets/js/game.js"></script>
 {% endblock %}
 

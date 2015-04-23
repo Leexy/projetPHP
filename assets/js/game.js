@@ -62,22 +62,26 @@ jQuery(function () {
     },
   ];
 
-  Battleship.api.fetchGameState(function (game) {
-    switch (game.state) {
-      case Battleship.state.waiting:
-        Battleship.api.waitForGameState(
-          [Battleship.state.placing,Battleship.state.player1_ready,Battleship.state.player2_ready],
-          function (error, game) {
-            $('#opponent-name').text(game.opponentName);
-            $('#game').removeClass('no-opponent').addClass('has-opponent');
-          }
-        );
-        break;
-      default:
-        console.log('unhandled game state: ' + game.state);
-        break;
+  Battleship.registerAction({
+    previousGameStates: [null, Battleship.gameState.waiting],
+    currentGameStates: [Battleship.gameState.placing, Battleship.gameState.player1_ready, Battleship.gameState.player2_ready, Battleship.gameState.playing, Battleship.gameState.finished],
+    proceed: function (game) {
+      $('#opponent-name').text(game.opponentName);
+      $('#game').removeClass('no-opponent').addClass('has-opponent');
     }
   });
+
+  Battleship.registerAction({
+    previousGameStates: '*',
+    currentGameStates: [Battleship.gameState.playing],
+    proceed: function (game) {
+      if (game.play) {
+        $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
+      }
+    }
+  });
+
+  Battleship.run();
 
   /* initialise le canvas de la grille du joueur */
   function initPlayerGrid() {
@@ -231,17 +235,10 @@ jQuery(function () {
     else{
       $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span>You have place all your boats ! Wait till your opponent is ready now ;).</div>" );
       $("#btnReady").attr('disabled',true);
-      Battleship.api.placeShips(boats.map(boatToShipModel), function(){
-        Battleship.api.ready(function(){
-          Battleship.api.waitForGameState([Battleship.state.playing], function (error, game) {
-            if (game.play) {
-              $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
-            } else {
-              Battleship.api.waitForMyTurn(function (error, game) {
-                $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
-              });
-            }
-          });
+      Battleship.api.placeShips(boats.map(boatToShipModel), function () {
+        console.log('Ship placed');
+        Battleship.api.ready(function () {
+          console.log('Ready: OK');
         });
       });
     }
