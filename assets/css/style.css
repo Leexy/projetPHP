@@ -191,6 +191,14 @@ a:hover {
 	margin-top: 25px;
 }
 
+#game.has-opponent #wait-opponent-message {
+	display: none;
+}
+
+#game.no-opponent #opponent-infos {
+	display: none;
+}
+
 /* Footer */
 
 #footer {

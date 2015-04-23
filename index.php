@@ -117,6 +117,12 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
   if ($game->getState() === Game::STATE_PLAYING) {
     $response['play'] = $game->isPlayerTurn($user);
   }
+  $opponent = null;
+  $opponentId = $game->getOpponentIdOf($user);
+  if($opponentId){
+    $opponent = (new UserRepository($app->dbh))->fetchById($opponentId);
+    $response['opponentName'] = $opponent->getDisplayName();
+  }
 
   $app->response->setBody(json_encode($response));
 })->name('game.state');
@@ -150,6 +156,8 @@ $app->get('/games/:id', function ($gameId) use($app) {
     'states' => [
       'waiting' => Game::STATE_WAITING,
       'placing' => Game::STATE_PLACING,
+      'player1_ready' => Game::STATE_PLAYER1_READY,
+      'player2_ready' => Game::STATE_PLAYER2_READY,
       'playing' => Game::STATE_PLAYING,
       'finished' => Game::STATE_FINISHED,
     ],

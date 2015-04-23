@@ -62,6 +62,23 @@ jQuery(function () {
     },
   ];
 
+  Battleship.api.fetchGameState(function (game) {
+    switch (game.state) {
+      case Battleship.state.waiting:
+        Battleship.api.waitForGameState(
+          [Battleship.state.placing,Battleship.state.player1_ready,Battleship.state.player2_ready],
+          function (error, game) {
+            $('#opponent-name').text(game.opponentName);
+            $('#game').removeClass('no-opponent').addClass('has-opponent');
+          }
+        );
+        break;
+      default:
+        console.log('unhandled game state: ' + game.state);
+        break;
+    }
+  });
+
   /* initialise le canvas de la grille du joueur */
   function initPlayerGrid() {
     $('#cvsPlayer').attr("width", cw);
@@ -216,7 +233,7 @@ jQuery(function () {
       $("#btnReady").attr('disabled',true);
       Battleship.api.placeShips(boats.map(boatToShipModel), function(){
         Battleship.api.ready(function(){
-          Battleship.api.waitForGameState(Battleship.state.playing, function (error, game) {
+          Battleship.api.waitForGameState([Battleship.state.playing], function (error, game) {
             if (game.play) {
               $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span> This is your turn.</div>" );
             } else {

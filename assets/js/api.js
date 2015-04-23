@@ -4,10 +4,22 @@ jQuery(function () {
   var api = window.Battleship.api = {};
 
   /* Execute le callback quand l'état correspond à celui qui a été spécifié */
-  api.waitForGameState = function waitForGameState(state, callback) {
+  api.waitForGameState = function waitForGameState(states, callback) {
     Polling.fetch({ url: Battleship.url.state }, function (game) {
-      return game.state === state;
+      return states.indexOf(game.state) !== -1;
     }, callback);
+  };
+
+  //recupere un etat
+  api.fetchGameState = function fetchGameState(callback){
+    jQuery.ajax({
+      success: callback,
+      error: function () {
+        console.error(arguments);
+      },
+      type: 'GET',
+      url: Battleship.url.state
+    });
   };
 
   /* Execute le callback quand c'est le tour du joueur */
