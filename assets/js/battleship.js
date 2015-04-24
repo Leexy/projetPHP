@@ -12,7 +12,7 @@ jQuery(function () {
 
   function stateChanged(previous, current) {
     for (var property in current) {
-      if (current.hasOwnProperty(property)) {
+      if (current.hasOwnProperty(property) && typeof current[property] !== 'object') {
         if (current[property] !== previous[property]) {
           return true;
         }
