@@ -111,7 +111,7 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
   $gameRepository = new GameRepository($app->dbh);
   $game = $gameRepository->fetchById($gameId);
   if (!$game->isPlaying($user)) {
-    $app->redirect($app->urlFor('games.list'));
+    $app->halt(403);
   }
   $response = ['state' => $game->getState()];
   if ($game->getState() === Game::STATE_PLAYING) {
