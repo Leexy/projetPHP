@@ -63,7 +63,7 @@ class Hit
             $this->gameRepository->win($this->game, $this->shooter);
             $won = true;
         }
-        $this->gameRepository->switchPlayingUser($this->game);
+        $this->gameRepository->switchPlayingUser($this->game, $hit);
         return [
             'success' => $hit->isSuccess(),
             'x' => $hit->getX(),
