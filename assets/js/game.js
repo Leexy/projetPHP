@@ -22,6 +22,8 @@ jQuery(function () {
     4: "cruiser",
     5: "battleship"
   };
+  var playerHits = [];
+  var enemyHits = [];
   var boats = [
     {
       name: "submarine",
@@ -112,6 +114,12 @@ jQuery(function () {
       } else {
         $( "#alert-msg" ).html( "<div class=\"alert-box notice\">Your opponent is playing.</div>" );
       }
+      playerHits = game.player_hits;
+      enemyHits = game.opponent_hits;
+      drawGrid(ctxPlayer, cw, ch, p);
+      drawGrid(ctxEnemy, gridWidth, gridHeight, p);
+      drawBoats();
+      drawHits();
     }
   });
 
@@ -136,8 +144,7 @@ jQuery(function () {
   /* Dessine la grille */
   function drawGrid(ctx,width,height,p) {
     // clear the canvas
-    ctx.fillStyle="white";
-    ctx.fillRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width, height);
     var arrayCoordX = ["a","b","c","d","e","f","g","h","i","j"]
     var arrayCoordY = ["1","2","3","4","5","6","7","8","9","10"]
     var i=0;
@@ -164,6 +171,7 @@ jQuery(function () {
   }
   /* dessine un bateau specifique */
   function drawBoat(boat) {
+    ctxPlayer.save();
     ctxPlayer.fillStyle = "rgb(48,48,48)";
     if(boat.orientation == "horizontal"){
       ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
@@ -171,7 +179,31 @@ jQuery(function () {
     else if(boat.orientation == "vertical"){
       ctxPlayer.fillRect(boat.x, boat.y,boat.height,boat.width);
     }
+    ctxPlayer.restore();
   }
+
+  function drawHits() {
+    playerHits.forEach(function (hit) {
+      drawHit(hit, ctxEnemy);
+    });
+    enemyHits.forEach(function (hit) {
+      drawHit(hit, ctxPlayer);
+    });
+  }
+
+  function drawHit(hit, context) {
+    var radius = 17;
+    context.save();
+    context.beginPath();
+    context.arc(gridToCanvas(+hit.x) + squareSize / 2, gridToCanvas(+hit.y) + squareSize / 2, radius, 0, 2 * Math.PI, false);
+    context.fillStyle = 'orange';
+    context.fill();
+    context.lineWidth = 2;
+    context.strokeStyle = 'red';
+    context.stroke()
+    context.restore();
+  }
+
   //fonction qui renvoie le bateau clique
   function getPointedBoat(x,y){
     var selectedBoat;
