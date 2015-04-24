@@ -54,7 +54,6 @@ class Hit
         foreach ($this->getOpponentShips() as $opponentShip) {
             if ($opponentShip->isHitBy($hit)) {
                 $hit->setSuccess(true);
-                // TODO: add a wound to $opponentShip
             }
         }
         $this->hitRepository->create($hit);
@@ -91,7 +90,7 @@ class Hit
      * @return Ship[]
      */
     protected function getOpponentShips()
-    {// TODO: check if this works
+    {
         return $this->shipRepository->fetchForUserInGame(
             new User($this->game->getOpponentIdOf($this->shooter)),
             $this->game

@@ -60,19 +60,18 @@ class Ship extends Base
 
   public function isHitBy(Hit $hit)
   {
-    // TODO: check this method -> why did not the ship got hit? 
     $isHit = true;
     if ($this->isHorizontal()) {
       $isHit = (
         $hit->getX() >= $this->getX() and
         $hit->getX() < ($this->getX() + $this->getSize()) and
-        $this->getY() === $hit->getY()
+        $this->getY() == $hit->getY()
       );
     } elseif ($this->isVertical()) {
       $isHit = (
         $hit->getY() >= $this->getY() and
         $hit->getY() < ($this->getY() + $this->getSize()) and
-        $this->getX() === $hit->getX()
+        $this->getX() == $hit->getX()
       );
     }
     return $isHit;
