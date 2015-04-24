@@ -16,6 +16,12 @@ jQuery(function () {
   var draggingBoat = null;
   var thisIsMyTurn = false;
   var hitsHistory = [];
+  var boatNames = {
+    2: "submarine",
+    3: "destroyer",
+    4: "cruiser",
+    5: "battleship"
+  };
   var boats = [
     {
       name: "submarine",
@@ -63,6 +69,28 @@ jQuery(function () {
       orientation: "horizontal",
     },
   ];
+
+  Battleship.registerAction({
+    previousGameStates: [null],
+    currentGameStates: '*',
+    proceed: function (game) {
+      game.player_ships.forEach(function (ship) {
+        var boat = getMatchingBoat(ship);
+        boat.id = ship.id;
+        boat.x = gridToCanvas(+ship.x);
+        boat.y = gridToCanvas(+ship.y);
+        boat.orientation = ship.orientation.toLowerCase();
+      });
+      drawGrid(ctxPlayer,cw,ch,p);
+      drawBoats();
+    }
+  });
+
+  function getMatchingBoat(ship) {
+    return boats.filter(function (boat) {
+      return boat.size == ship.size && !boat.id;
+    })[0];
+  }
 
   Battleship.registerAction({
     previousGameStates: [null, Battleship.gameState.waiting],
@@ -144,15 +172,6 @@ jQuery(function () {
       ctxPlayer.fillRect(boat.x, boat.y,boat.height,boat.width);
     }
   }
-  //change les coord du bateau onmousemove
-  function onUserAction(x,y) {
-    if(draggingBoat){
-      draggingBoat.x = x;
-      draggingBoat.y = y;
-    }
-    drawGrid(ctxPlayer,cw,ch,p);
-    drawBoats();
-  }
   //fonction qui renvoie le bateau clique
   function getPointedBoat(x,y){
     var selectedBoat;
@@ -190,8 +209,8 @@ jQuery(function () {
     return Math.ceil(canvasPos / squareSize);
   }
   //transforme les bateaux en "ship" pour correspondre au modele serveur
-  function boatToShipModel(boat){
-    return {
+  function addShipDataToBoat(boat){
+    boat.shipData = {
       x: boat.gridX,
       y: boat.gridY,
       size: boat.size,
@@ -245,7 +264,8 @@ jQuery(function () {
     else{
       $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span>You have place all your boats ! Wait till your opponent is ready now ;).</div>" );
       $("#btnReady").attr('disabled',true);
-      Battleship.api.placeShips(boats.map(boatToShipModel), function () {
+      boats.forEach(addShipDataToBoat);
+      Battleship.api.placeShips(boats, function () {
         console.log('Ship placed');
         Battleship.api.ready(function () {
           console.log('Ready: OK');
@@ -255,10 +275,16 @@ jQuery(function () {
   });
   //appel a chaque fois que la souris bouge
   $('#cvsPlayer').mousemove(function (e) {
-    var cvsPlayerOffset = $(e.target).offset();
-    var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
-    var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
-    onUserAction(x,y);
+    if(draggingBoat){
+      //change les coord du bateau deplace si il y en a un
+      var cvsPlayerOffset = $(e.target).offset();
+      var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
+      var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
+      draggingBoat.x = x;
+      draggingBoat.y = y;
+      drawGrid(ctxPlayer,cw,ch,p);
+      drawBoats();
+    }
   });
   //appel au clic gauche (drag & drop du bateau) et clic droit (changement d'orientation)
   $('#cvsPlayer').mousedown(function (e) {

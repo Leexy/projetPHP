@@ -33,7 +33,7 @@ $app->post('/games/:id/place-ship', function ($gameId) use($app) {
   $shipPlacingService->setShipRepository(new ShipRepository($app->dbh));
   try {
     $shipPlacingService->handle($ship);
-    $app->response->setBody(json_encode(['success' => true]));
+    $app->response->setBody(json_encode($ship));
   } catch (ShipPlacingError $error) {
     switch ($error->getCode()) {
     case ShipPlacingError::CODE_INVALID_GAME_STATE:
@@ -115,10 +115,10 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
     $app->halt(403);
   }
   $response = ['state' => $game->getState()];
+  $shipRepository = new ShipRepository($app->dbh);
+  $response['player_ships'] = $shipRepository->fetchForUserInGame($user, $game, true);
   if ($game->getState() === Game::STATE_PLAYING) {
     $response['play'] = $game->isPlayerTurn($user);
-    $shipRepository = new ShipRepository($app->dbh);
-    $response['player_ships'] = $shipRepository->fetchForUserInGame($user, $game, true);
     $response['sunk_ships'] = $shipRepository->fetchSunkForUserInGame($opponent, $game, true);
     $hitRepository = new HitRepository($app->dbh);
     $response['player_hits'] = $hitRepository->fetchByUserInGame($user, $game);

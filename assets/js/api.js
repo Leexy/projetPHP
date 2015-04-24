@@ -16,11 +16,14 @@ jQuery(function () {
   };
 
   //envoi une requete de placement de bateau
-  api.placeShip = function postPlaceShip(ship, callback) {
+  api.placeShip = function postPlaceShip(boat, callback) {
     jQuery.ajax({
       contentType: 'application/json',
-      data: JSON.stringify(ship),
-      success: callback,
+      data: JSON.stringify(boat.shipData),
+      success: function (result) {
+        boat.id = result.id;
+        callback(result);
+      },
       error: function () {
         // api.placeShip(ship, callback);
         console.error(arguments);
