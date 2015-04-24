@@ -23,6 +23,11 @@ AND user_id = :user_id
 AND game_id = :game_id;
 SQL;
 
+  private static $FETCH_BY_USER_IN_GAME_QUERY = <<<'SQL'
+SELECT * FROM hits
+WHERE user_id = :user_id
+AND game_id = :game_id;
+SQL;
 
   /**
    * @param Hit $hit
@@ -39,6 +44,19 @@ SQL;
       $stmt->bindValue('game_id', $hit->getGameId(), PDO::PARAM_INT);
       $stmt->execute();
       $hit->setId($this->dbh->lastInsertId());
+    } catch (PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function fetchByUserInGame(User $user, Game $game)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_BY_USER_IN_GAME_QUERY);
+      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
+      $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchAll();
     } catch (PDOException $error) {
       throw RepositoryError::wrap($error);
     }

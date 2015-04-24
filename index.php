@@ -120,6 +120,9 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
     $shipRepository = new ShipRepository($app->dbh);
     $response['player_ships'] = $shipRepository->fetchForUserInGame($user, $game, true);
     $response['sunk_ships'] = $shipRepository->fetchSunkForUserInGame($opponent, $game, true);
+    $hitRepository = new HitRepository($app->dbh);
+    $response['player_hits'] = $hitRepository->fetchByUserInGame($user, $game);
+    $response['opponent_hits'] = $hitRepository->fetchByUserInGame($opponent, $game);
   }
   $opponent = null;
   $opponentId = $game->getOpponentIdOf($user);
