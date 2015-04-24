@@ -24,6 +24,7 @@ jQuery(function () {
   };
   var playerHits = [];
   var enemyHits = [];
+  var sunkBoats = [];
   var boats = [
     {
       name: "submarine",
@@ -114,10 +115,21 @@ jQuery(function () {
       } else {
         $( "#alert-msg" ).html( "<div class=\"alert-box notice\">Your opponent is playing.</div>" );
       }
+      sunkBoats = game.sunk_ships.map(function (ship) {
+        return {
+          size: +ship.size,
+          orientation: ship.orientation.toLowerCase(),
+          x: gridToCanvas(+ship.x),
+          y: gridToCanvas(+ship.y),
+          width: (squareSize - 1) * ship.size + (ship.size - 1),
+          height: squareSize - 1
+        }
+      });
       playerHits = game.player_hits;
       enemyHits = game.opponent_hits;
       drawGrid(ctxPlayer, cw, ch, p);
       drawGrid(ctxEnemy, gridWidth, gridHeight, p);
+      drawSunkBoats();
       drawBoats();
       drawHits();
     }
@@ -166,20 +178,26 @@ jQuery(function () {
   function drawBoats() {
     for (var i=0; i<boats.length; i++){
       var b = boats[i];
-      drawBoat(b);
+      drawBoat(b, ctxPlayer);
     }
   }
+  /* dessine tous les bateaux coules */
+  function drawSunkBoats() {
+    sunkBoats.forEach(function (boat) {
+      drawBoat(boat, ctxEnemy, true);
+    });
+  }
   /* dessine un bateau specifique */
-  function drawBoat(boat) {
-    ctxPlayer.save();
-    ctxPlayer.fillStyle = "rgb(48,48,48)";
+  function drawBoat(boat, context, sunk) {
+    context.save();
+    context.fillStyle = !sunk ? "rgb(48,48,48)" : "rgb(150,0,0)";
     if(boat.orientation == "horizontal"){
-      ctxPlayer.fillRect(boat.x, boat.y,boat.width,boat.height);
+      context.fillRect(boat.x, boat.y,boat.width,boat.height);
     }
     else if(boat.orientation == "vertical"){
-      ctxPlayer.fillRect(boat.x, boat.y,boat.height,boat.width);
+      context.fillRect(boat.x, boat.y,boat.height,boat.width);
     }
-    ctxPlayer.restore();
+    context.restore();
   }
 
   function drawHits() {
