@@ -27,6 +27,13 @@ WHERE game_id = :game_id
 AND user_id = :user_id;
 SQL;
 
+  private static $FETCH_SUNK_FOR_USER_IN_GAME_QUERY = <<<'SQL'
+SELECT * FROM ships
+WHERE wounds >= size
+AND game_id = :game_id
+AND user_id = :user_id;
+SQL;
+
   private static $WOUND = <<<'SQL'
 UPDATE ships SET wounds = wounds + 1
 WHERE id = :ship_id;
@@ -83,13 +90,42 @@ SQL;
    * @return Ship[]
    * @throws RepositoryError
    */
-  public function fetchForUserInGame(User $user, Game $game)
+  public function fetchForUserInGame(User $user, Game $game, $raw = false)
   {
     try {
       $stmt = $this->dbh->prepare(static::$FETCH_FOR_USER_IN_GAME_QUERY);
       $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
       $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
       $stmt->execute();
+      if ($raw) {
+        return $stmt->fetchAll();
+      }
+      $ships = [];
+      foreach ($stmt->fetchAll() as $shipData) {
+        $ships[] = new Ship($shipData);
+      }
+      return $ships;
+    } catch (PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  /**
+   * @param User $user
+   * @param Game $game
+   * @return Ship[]
+   * @throws RepositoryError
+   */
+  public function fetchSunkForUserInGame(User $user, Game $game, $raw = false)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_SUNK_FOR_USER_IN_GAME_QUERY);
+      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
+      $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      if ($raw) {
+        return $stmt->fetchAll();
+      }
       $ships = [];
       foreach ($stmt->fetchAll() as $shipData) {
         $ships[] = new Ship($shipData);
