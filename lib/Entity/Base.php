@@ -2,7 +2,7 @@
 
 namespace Entity;
 
-class Base
+class Base implements \JsonSerializable
 {
   /**
    * @var array
@@ -42,5 +42,10 @@ class Base
   public function isPersisted()
   {
     return !empty($this->data['id']);
+  }
+
+  public function jsonSerialize()
+  {
+    return $this->data;
   }
 }
