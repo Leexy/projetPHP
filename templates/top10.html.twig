@@ -7,16 +7,27 @@
 {% endblock %}
 {% block content %}
   <div id="top">
-  {% if top10 is empty %}
-  <div class="alert-box notice"><span>notice: </span>Currently, there is no top10, let's play to be the best !</div>
+  {% if top_ten is empty %}
+  <div class="alert-box notice"><span>notice: </span>Currently, there is no top 10, let's play to be the best !</div>
   {% else %}
-    <ul>
-      {% for user in top10 %}
-        <li>
-          {{user.display_name}} : {{user.victories}}
-        </li>
+    <table style="">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Player</th>
+          <th>Victories</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for user in top_ten %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{user.display_name}}</td>
+          <td>{{user.victories}}</td>
+        </tr>
       {% endfor %}
-    </ul>
+      </tbody>
+    </table>
   {% endif %}
   </div>
 {% endblock %}
