@@ -117,7 +117,7 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
   $response = ['state' => $game->getState()];
   $shipRepository = new ShipRepository($app->dbh);
   $response['player_ships'] = $shipRepository->fetchForUserInGame($user, $game, true);
-  if ($game->getState() === Game::STATE_PLAYING) {
+  if (in_array($game->getState(), [Game::STATE_PLAYING, Game::STATE_FINISHED])) {
     $response['play'] = $game->isPlayerTurn($user);
     $response['sunk_ships'] = $shipRepository->fetchSunkForUserInGame($opponent, $game, true);
     $hitRepository = new HitRepository($app->dbh);

@@ -106,7 +106,7 @@ jQuery(function () {
 
   Battleship.registerAction({
     previousGameStates: '*',
-    currentGameStates: [Battleship.gameState.playing],
+    currentGameStates: [Battleship.gameState.playing, Battleship.gameState.finished],
     proceed: function (game) {
       $('#placing-instructions, #btnReady').remove();
       thisIsMyTurn = game.play;
