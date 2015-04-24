@@ -214,10 +214,10 @@ jQuery(function () {
     context.save();
     context.beginPath();
     context.arc(gridToCanvas(+hit.x) + squareSize / 2, gridToCanvas(+hit.y) + squareSize / 2, radius, 0, 2 * Math.PI, false);
-    context.fillStyle = 'orange';
+    context.fillStyle = hit.success == '1' ? 'orange' : 'blue';
     context.fill();
     context.lineWidth = 2;
-    context.strokeStyle = 'red';
+    context.strokeStyle = hit.success == '1' ? 'red' : 'green';
     context.stroke()
     context.restore();
   }
