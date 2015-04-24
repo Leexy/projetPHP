@@ -54,6 +54,7 @@ class Hit
         foreach ($this->getOpponentShips() as $opponentShip) {
             if ($opponentShip->isHitBy($hit)) {
                 $hit->setSuccess(true);
+                $this->shipRepository->wound($opponentShip);
             }
         }
         $this->hitRepository->create($hit);

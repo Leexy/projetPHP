@@ -27,6 +27,11 @@ WHERE game_id = :game_id
 AND user_id = :user_id;
 SQL;
 
+  private static $WOUND = <<<'SQL'
+UPDATE ships SET wounds = wounds + 1
+WHERE id = :ship_id;
+SQL;
+
   public function create(Ship $ship, Game $game, User $owner)
   {
     try {
@@ -55,6 +60,18 @@ SQL;
       $stmt->bindValue('orientation', $ship->getOrientation(), PDO::PARAM_STR);
       $stmt->execute();
       return $ship;
+    } catch (PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function wound(Ship $ship)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$WOUND);
+      $stmt->bindValue('ship_id', (int)$ship->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      $ship->setWounds($ship->getWounds() + 1);
     } catch (PDOException $error) {
       throw RepositoryError::wrap($error);
     }

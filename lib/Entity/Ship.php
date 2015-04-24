@@ -43,6 +43,21 @@ class Ship extends Base
     return $this->data['game_id'];
   }
 
+  public function isDestroyed()
+  {
+    return $this->getWounds() >= $this->getSize();
+  }
+
+  public function getWounds()
+  {
+    return $this->data['wounds'];
+  }
+
+  public function setWounds($wounds)
+  {
+    $this->data['wounds'] = $wounds;
+  }
+
   public function isVertical()
   {
     return $this->getOrientation() === self::ORIENTATION_VERTICAL;
