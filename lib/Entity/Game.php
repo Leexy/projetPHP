@@ -26,6 +26,28 @@ class Game extends Base
     return $user->getId() === $this->getPlayingUserId();
   }
 
+  public function isPlayerReady(User $user)
+  {
+    $currentState = $this->getState();
+    if (in_array($currentState, [Game::STATE_WAITING, Game::STATE_PLACING])) {
+      return false;
+    }
+    if (in_array($currentState, [Game::STATE_PLAYING, Game::STATE_FINISHED])) {
+      return true;
+    }
+    if (in_array($currentState, [Game::STATE_PLAYER1_READY, Game::STATE_PLAYER2_READY])) {
+      if ($user->getId() === $this->getUser1Id()) {
+        return $currentState === Game::STATE_PLAYER1_READY;
+      } else if ($user->getId() === $this->getUser2Id()) {
+        return $currentState === Game::STATE_PLAYER2_READY;
+      } else {
+        throw new \RuntimeException(sprintf('Error: user[%s] not in game[%s].', $user->getId(), $this->getId()));
+      }
+    } else {
+      throw new \RuntimeException("Error: unhandled state '$currentState'.");
+    }
+  }
+
   public function setState($state)
   {
     $this->data['state'] = $state;

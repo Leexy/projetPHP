@@ -110,20 +110,27 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
   $user = $app->user;
   $userRepository = new UserRepository($app->dbh);
   $gameRepository = new GameRepository($app->dbh);
+  $hitRepository = new HitRepository($app->dbh);
   $game = $gameRepository->fetchById($gameId);
-  $opponent = $userRepository->fetchById($game->getOpponentIdOf($user));;
   if (!$game->isPlaying($user)) {
     $app->halt(403);
   }
   $response = ['state' => $game->getState()];
+  $response['player_is_ready'] = $game->isPlayerReady($user);
   $shipRepository = new ShipRepository($app->dbh);
   $response['player_ships'] = $shipRepository->fetchForUserInGame($user, $game, true);
+  $opponentId = $game->getOpponentIdOf($user);
+  $opponent = null;
+  if (!empty($opponentId)) {
+    $opponent = $userRepository->fetchById($opponentId);;
+  }
   if (in_array($game->getState(), [Game::STATE_PLAYING, Game::STATE_FINISHED])) {
     $response['play'] = $game->isPlayerTurn($user);
-    $response['sunk_ships'] = $shipRepository->fetchSunkForUserInGame($opponent, $game, true);
-    $hitRepository = new HitRepository($app->dbh);
     $response['player_hits'] = $hitRepository->fetchByUserInGame($user, $game);
-    $response['opponent_hits'] = $hitRepository->fetchByUserInGame($opponent, $game);
+    if (!empty($opponent)) {
+      $response['sunk_ships'] = $shipRepository->fetchSunkForUserInGame($opponent, $game, true);
+      $response['opponent_hits'] = $hitRepository->fetchByUserInGame($opponent, $game);
+    }
   }
   if (!empty($opponent)) {
     $response['opponentName'] = $opponent->getDisplayName();

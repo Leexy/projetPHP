@@ -16,6 +16,7 @@ jQuery(function () {
   var draggingBoat = null;
   var thisIsMyTurn = false;
   var gameState;
+  var playerReady;
   var hitsHistory = [];
   var boatNames = {
     2: "submarine",
@@ -95,6 +96,7 @@ jQuery(function () {
     currentGameStates: '*',
     proceed: function (game) {
       gameState = game.state;
+      playerReady = game.player_is_ready;
     }
   });
 
@@ -118,7 +120,6 @@ jQuery(function () {
     currentGameStates: [Battleship.gameState.finished],
     proceed: function (game) {
       $('#cvsEnemy').addClass('disableCanvas');
-      $('#cvsPlayer').addClass('disableCanvas');
       $( "#alert-msg" ).html( "<div class=\"alert-box success\">The game is finished, congrats to <strong>" + game.winner + "</strong>!</div>" );
     }
   });
@@ -128,6 +129,7 @@ jQuery(function () {
     currentGameStates: [Battleship.gameState.playing, Battleship.gameState.finished],
     proceed: function (game) {
       $('#placing-instructions, #btnReady').remove();
+      $('#cvsPlayer').addClass('disableCanvas');
       thisIsMyTurn = game.play;
       if(Battleship.gameState.finished != game.state){
         if (thisIsMyTurn) {
@@ -291,6 +293,7 @@ jQuery(function () {
   //fonction qui transforme le bateau horizontal en vertical
   function changeOrientation(boat){
       boat.orientation = boat.orientation == "vertical"?"horizontal":"vertical";
+      ctxPlayer.clearRect(0, 0, cw, ch);
       drawGrid(ctxPlayer,gridWidth,gridHeight,p);
       drawBoats();
   }
@@ -360,6 +363,9 @@ jQuery(function () {
   });
   //appel au clic gauche (drag & drop du bateau) et clic droit (changement d'orientation)
   $('#cvsPlayer').mousedown(function (e) {
+    if(playerReady){
+      return;
+    }
     var cvsPlayerOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
     var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
