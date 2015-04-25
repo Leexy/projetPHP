@@ -34,6 +34,14 @@ WHERE user_id = :user_id
 AND game_id = :game_id;
 SQL;
 
+  private static $FETCH_BY_SUCCESS_AND_USER_QUERY = <<<'SQL'
+select success, count(id) as `count`
+from hits
+where user_id = :user_id
+group by success;
+SQL;
+
+
   /**
    * @param Hit $hit
    * @throws RepositoryError
@@ -73,6 +81,18 @@ SQL;
       $stmt = $this->dbh->prepare(static::$FETCH_BY_USER_IN_GAME_QUERY);
       $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
       $stmt->bindValue('game_id', $game->getId(), PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchAll();
+    } catch (PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function fetchBySuccessAndUser(User $user)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_BY_SUCCESS_AND_USER_QUERY);
+      $stmt->bindValue('user_id', $user->getId(), PDO::PARAM_INT);
       $stmt->execute();
       return $stmt->fetchAll();
     } catch (PDOException $error) {
