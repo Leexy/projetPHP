@@ -13,7 +13,7 @@ class Game extends Base
 
   public static function getStartedStates()
   {
-    return [static::STATE_PLACING, static::STATE_PLAYING];
+    return [static::STATE_PLACING,static::STATE_PLAYER1_READY,static::STATE_PLAYER2_READY, static::STATE_PLAYING];
   }
 
   public function isPlaying(User $user)
