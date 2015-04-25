@@ -97,6 +97,9 @@ jQuery(function () {
         boat.y = gridToCanvas(+ship.y);
         boat.orientation = ship.orientation.toLowerCase();
       });
+      if(game.player_is_ready){
+        $("#btnReady").attr('disabled',true);
+      }
       drawGrid(ctxPlayer,cw,ch,p);
       drawBoats();
     }
