@@ -51,10 +51,14 @@ class Hit
         $hit->setGameId($this->game->getId());
         $hit->setUserId($this->shooter->getId());
         $hit->setSuccess(false);
+        $hasDestroyedShip = false;
         foreach ($this->getOpponentShips() as $opponentShip) {
             if ($opponentShip->isHitBy($hit)) {
                 $hit->setSuccess(true);
                 $this->shipRepository->wound($opponentShip);
+                if ($opponentShip->isDestroyed()) {
+                  $hasDestroyedShip = true;
+                }
             }
         }
         $this->hitRepository->create($hit);
@@ -66,6 +70,7 @@ class Hit
         $this->gameRepository->switchPlayingUser($this->game, $hit);
         return [
             'success' => $hit->isSuccess(),
+            'sunk' => $hasDestroyedShip,
             'x' => $hit->getX(),
             'y' => $hit->getY(),
             'won' => $won,

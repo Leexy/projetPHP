@@ -1,6 +1,12 @@
 jQuery(function () {
   'use strict';
   $('body').on('contextmenu', 'canvas', function (){ return false; }); // desactive le clic droit sur le canvas
+  var sound = {
+    missedHit: document.getElementById('missed-hit-sound'),
+    hitBlast: document.getElementById('hit-blast-sound'),
+    shipDestroyed: document.getElementById('ship-destroyed-sound'),
+    opponentDestroyed: document.getElementById('opponent-destroyed-sound')
+  };
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
   var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
   //hauteur et largeur de la grille
@@ -121,6 +127,14 @@ jQuery(function () {
     proceed: function (game) {
       $('#cvsEnemy').addClass('disableCanvas');
       $( "#alert-msg" ).html( "<div class=\"alert-box success\">The game is finished, congrats to <strong>" + game.winner + "</strong>!</div>" );
+    }
+  });
+
+  Battleship.registerAction({
+    previousGameStates: [Battleship.gameState.playing],
+    currentGameStates: [Battleship.gameState.finished],
+    proceed: function () {
+      sound.opponentDestroyed.play();
     }
   });
 
@@ -443,6 +457,13 @@ jQuery(function () {
             thisIsMyTurn = true;
           } else {
             hitsHistory.push(hit);
+            if (result.sunk) {
+              sound.shipDestroyed.play();
+            } else if (result.success) {
+              sound.hitBlast.play();
+            } else {
+              sound.missedHit.play();
+            }
           }
         });
       }
