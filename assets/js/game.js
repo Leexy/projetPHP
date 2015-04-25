@@ -407,6 +407,7 @@ jQuery(function () {
       drawGrid(ctxEnemy,gridWidth,gridHeight,p);
       highlightSquare(squarePos);
       drawBoats();
+      drawSunkBoats();
       drawHits();
     }
   });
