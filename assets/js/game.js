@@ -190,7 +190,7 @@ jQuery(function () {
   /* dessine un bateau specifique */
   function drawBoat(boat, context, sunk) {
     context.save();
-    context.fillStyle = !sunk ? "rgb(48,48,48)" : "rgb(150,0,0)";
+    context.fillStyle = !sunk ? "#7E7E6C" : "#990000";
     if(boat.orientation == "horizontal"){
       context.fillRect(boat.x, boat.y,boat.width,boat.height);
     }
@@ -214,10 +214,10 @@ jQuery(function () {
     context.save();
     context.beginPath();
     context.arc(gridToCanvas(+hit.x) + squareSize / 2, gridToCanvas(+hit.y) + squareSize / 2, radius, 0, 2 * Math.PI, false);
-    context.fillStyle = hit.success == '1' ? 'orange' : 'blue';
+    context.fillStyle = hit.success == '1' ? '#FF9900' : '#5C85FF'; //orange, bleu
     context.fill();
     context.lineWidth = 2;
-    context.strokeStyle = hit.success == '1' ? 'red' : 'green';
+    context.strokeStyle = hit.success == '1' ? '#CC0000' : '#006600'; // rouge, vert
     context.stroke()
     context.restore();
   }
