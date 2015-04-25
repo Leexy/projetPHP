@@ -1,9 +1,10 @@
 <?php
 
 namespace Entity;
-
+// represente une partie de bataille navale entre deux joueurs
 class Game extends Base
 {
+  //les differents etats possibles d'une partie :
   const STATE_WAITING = 'waiting';
   const STATE_PLACING = 'placing';
   const STATE_PLAYER1_READY = 'player1_ready';

@@ -12,7 +12,7 @@ use Entity\Hit as HitEntity;
 
 use Repository\ShipRepository;
 use Entity\Ship;
-
+//contient la logique de gestion des Hits
 class Hit
 {
     /**

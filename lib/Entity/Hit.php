@@ -1,7 +1,7 @@
 <?php
 
 namespace Entity;
-
+//represente un tir d'un des deux joueurs dans une partie
 class Hit extends Base
 {
     public function getX()

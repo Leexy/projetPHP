@@ -1,7 +1,7 @@
 <?php
 
 namespace Entity;
-
+// classe de base de toutes les entites du modele
 class Base implements \JsonSerializable
 {
   /**

@@ -4,7 +4,7 @@ namespace Service\User;
 use Repository\UserRepository;
 use Repository\Error\Base as RepositoryError;
 use Repository\Error\DuplicatedKey;
-
+//permet l'inscription d'un nouvel utilisateur
 class Signup
 {
   const ERROR_NO_DATA = 10;

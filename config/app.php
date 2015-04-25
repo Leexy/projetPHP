@@ -1,6 +1,6 @@
 <?php
 $config = [];
-
+// configuration de l'application
 $config['slim'] = [];
 
 // Mettre à false pour que le gestionnaire d'erreur personnalisé soit utilisé,

@@ -11,7 +11,7 @@ use Entity\Hit;
 use Entity\Game;
 use Repository\Error\GameCreationLimit;
 use Repository\Error\FullGame;
-
+//contient les operations de persistence relatives a l'entite Game
 class GameRepository extends Base
 {
   private static $CREATE_QUERY = <<<'SQL'

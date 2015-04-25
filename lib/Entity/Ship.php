@@ -1,7 +1,7 @@
 <?php
 
 namespace Entity;
-
+//represente un bateau d'un joueur dans une partie
 class Ship extends Base
 {
   const ORIENTATION_VERTICAL = 'VERTICAL';
@@ -72,7 +72,7 @@ class Ship extends Base
   {
     return $this->data['orientation'];
   }
-
+  //defini si le bateau est touche par le tir ou non
   public function isHitBy(Hit $hit)
   {
     $isHit = true;

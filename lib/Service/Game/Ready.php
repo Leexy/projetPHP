@@ -10,7 +10,7 @@ use Entity\Game;
 
 use Repository\ShipRepository;
 use Entity\Ship;
-
+//prend en compte quand un utilisateur est pret
 class Ready extends Base
 {
   /**

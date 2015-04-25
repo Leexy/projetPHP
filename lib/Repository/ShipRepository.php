@@ -8,7 +8,7 @@ use Repository\Error\Base as RepositoryError;
 use Entity\Ship;
 use Entity\User;
 use Entity\Game;
-
+//contient les operations de persistence relatives a l'entite Ship
 class ShipRepository extends Base
 {
   private static $CREATE_SHIP = <<<'SQL'

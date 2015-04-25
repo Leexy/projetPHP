@@ -7,7 +7,7 @@ use Repository\Error\Base as RepositoryError;
 use Repository\Error\DuplicatedKey;
 
 use Entity\User;
-
+//contient les operations de persistence relatives a l'entite User
 class UserRepository extends Base
 {
   private static $DUPLICATION_CODE = '23000';

@@ -7,7 +7,7 @@ use Entity\Ship;
 use Entity\User;
 use Repository\ShipRepository;
 use Service\Game\Error\ShipPlacing as ShipPlacingError;
-
+//prend en compte le placement d'un bateau
 class ShipPlacing
 {
   const SHIPS_OF_SIZE_2 = 1;

@@ -1,7 +1,7 @@
 <?php
 
 namespace Entity;
-
+//represente un joueur d'une partie
 class User extends Base
 {
   const ROLE_GUEST = 'guest';

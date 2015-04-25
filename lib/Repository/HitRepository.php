@@ -8,7 +8,7 @@ use Repository\Error\Base as RepositoryError;
 use Entity\Hit;
 use Entity\Game;
 use Entity\User;
-
+//contient les operations de persistence relatives a l'entite Hit
 class HitRepository extends Base
 {
   private static $FETCH_BY_ID_QUERY = <<<'SQL'

@@ -1,4 +1,5 @@
 <?php
+//configuration de l'acces a la base de donnees
 $config['db'] = [
   'host' => 'localhost',
   'name' => 'battleship',

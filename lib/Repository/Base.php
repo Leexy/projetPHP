@@ -2,7 +2,8 @@
 namespace Repository;
 
 use PDO;
-
+//classe mere de tous les Repository
+//contient le fonctionnement commun a tous les Repository
 class Base
 {
   /**

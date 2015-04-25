@@ -5,11 +5,12 @@ jQuery(function () {
   Battleship.previousState = { state: null };
   Battleship.currentState = { state: null };
   Battleship.pollInterval = 2500
-
+  //permet d'enregistrer une action a effectuer quand 
+  //l'etat du jeu (cote serveur) evolue
   Battleship.registerAction = function registerAction(action) {
     Battleship.actions.push(action);
   };
-  //verifie que l'etat du jeu a change
+  //verifie si l'etat du jeu a change
   function stateChanged(previous, current) {
     for (var property in current) {
       if (current.hasOwnProperty(property) && typeof current[property] !== 'object') {
@@ -34,7 +35,7 @@ jQuery(function () {
       setTimeout(Battleship.run, Battleship.pollInterval);
     });
   };
-  //fait le changement d'etat
+  //appel les actions enregistrees (si necessaire) lors d'un changement d'etat
   Battleship.handleStateChange = function handleStateChange() {
     console.log('state changed: ', Battleship.previousState, '→', Battleship.currentState);
     Battleship.actions.forEach(function (action) {
