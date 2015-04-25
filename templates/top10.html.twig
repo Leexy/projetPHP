@@ -3,22 +3,20 @@
 {% block title %}{{ parent() }} — Top 10{% endblock %}
 {% block css %}
 {{ parent() }}
-
+<link href="/assets/css/topTen.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
 {% block content %}
   <div id="top">
   {% if top_ten is empty %}
   <div class="alert-box notice"><span>notice: </span>Currently, there is no top 10, let's play to be the best !</div>
   {% else %}
+  <div class="topTen" >
     <table style="">
-      <thead>
         <tr>
-          <th></th>
-          <th>Player</th>
-          <th>Victories</th>
+          <td></td>
+          <td>Player</td>
+          <td>Victories</td>
         </tr>
-      </thead>
-      <tbody>
       {% for user in top_ten %}
         <tr>
           <td>{{ loop.index }}</td>
@@ -26,8 +24,8 @@
           <td>{{user.victories}}</td>
         </tr>
       {% endfor %}
-      </tbody>
     </table>
+  </div>
   {% endif %}
   </div>
 {% endblock %}
