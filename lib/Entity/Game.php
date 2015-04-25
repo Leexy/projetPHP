@@ -68,6 +68,11 @@ class Game extends Base
     return $this->data['user2_id'];
   }
 
+  public function getLastHitId()
+  {
+    return $this->data['last_hit_id'];
+  }
+
   public function getWinnerId()
   {
     return $this->data['winner_id'];

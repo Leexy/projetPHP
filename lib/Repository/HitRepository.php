@@ -11,9 +11,14 @@ use Entity\User;
 
 class HitRepository extends Base
 {
+  private static $FETCH_BY_ID_QUERY = <<<'SQL'
+SELECT * FROM hits
+WHERE id = :hit_id;
+SQL;
+
   private static $CREATE_QUERY = <<<'SQL'
-INSERT INTO hits(x, y, success, game_id, user_id)
-VALUES(:x, :y, :success, :game_id, :user_id);
+INSERT INTO hits(x, y, success, destroyed, game_id, user_id)
+VALUES(:x, :y, :success, :destroyed, :game_id, :user_id);
 SQL;
 
   private static $COUNT_SUCCESSFUL_HITS_FOR_USER_IN_GAME = <<<'SQL'
@@ -40,10 +45,23 @@ SQL;
       $stmt->bindValue('x', $hit->getX(), PDO::PARAM_INT);
       $stmt->bindValue('y', $hit->getY(), PDO::PARAM_INT);
       $stmt->bindValue('success', $hit->isSuccess(), PDO::PARAM_BOOL);
+      $stmt->bindValue('destroyed', $hit->hasDestroyed(), PDO::PARAM_BOOL);
       $stmt->bindValue('user_id', $hit->getUserId(), PDO::PARAM_INT);
       $stmt->bindValue('game_id', $hit->getGameId(), PDO::PARAM_INT);
       $stmt->execute();
       $hit->setId($this->dbh->lastInsertId());
+    } catch (PDOException $error) {
+      throw RepositoryError::wrap($error);
+    }
+  }
+
+  public function fetchById($hitId)
+  {
+    try {
+      $stmt = $this->dbh->prepare(static::$FETCH_BY_ID_QUERY);
+      $stmt->bindValue('hit_id', $hitId, PDO::PARAM_INT);
+      $stmt->execute();
+      return new Hit($stmt->fetch());
     } catch (PDOException $error) {
       throw RepositoryError::wrap($error);
     }

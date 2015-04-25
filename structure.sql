@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS hits (
     x INTEGER NOT NULL,
     y INTEGER NOT NULL,
     success tinyint(4) NOT NULL,
+    destroyed tinyint(4) NOT NULL,
     game_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     PRIMARY KEY (id),

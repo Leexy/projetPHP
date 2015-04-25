@@ -132,6 +132,9 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
       $response['opponent_hits'] = $hitRepository->fetchByUserInGame($opponent, $game);
     }
   }
+  if (!empty($game->getLastHitId())) {
+    $response['last_hit'] = $hitRepository->fetchById($game->getLastHitId());
+  }
   if (!empty($opponent)) {
     $response['opponentName'] = $opponent->getDisplayName();
   }

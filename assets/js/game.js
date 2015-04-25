@@ -41,7 +41,7 @@ jQuery(function () {
       width: 79,
       height: 39,
       size: 2,
-      orientation: "horizontal",
+      orientation: "horizontal"
     },
     {
       name: "destroyer",
@@ -50,7 +50,7 @@ jQuery(function () {
       width: 119,
       height: 39,
       size: 3,
-      orientation: "horizontal",
+      orientation: "horizontal"
     },
     {
       name: "destroyer",
@@ -59,7 +59,7 @@ jQuery(function () {
       width: 119,
       height: 39,
       size: 3,
-      orientation: "horizontal",
+      orientation: "horizontal"
     },
     {
       name: "cruiser",
@@ -68,7 +68,7 @@ jQuery(function () {
       width: 159,
       height: 39,
       size: 4,
-      orientation: "horizontal",
+      orientation: "horizontal"
     },
     {
       name: "battleship",
@@ -77,8 +77,8 @@ jQuery(function () {
       width: 199,
       height: 39,
       size: 5,
-      orientation: "horizontal",
-    },
+      orientation: "horizontal"
+    }
   ];
 
   Battleship.registerAction({
@@ -127,6 +127,22 @@ jQuery(function () {
     proceed: function (game) {
       $('#cvsEnemy').addClass('disableCanvas');
       $( "#alert-msg" ).html( "<div class=\"alert-box success\">The game is finished, congrats to <strong>" + game.winner + "</strong>!</div>" );
+    }
+  });
+
+  Battleship.registerAction({
+    previousGameStates: [Battleship.gameState.playing],
+    currentGameStates: [Battleship.gameState.playing],
+    proceed: function (game) {
+      if (game.last_hit) {
+        if (game.last_hit.destroyed == 1) {
+          sound.shipDestroyed.play();
+        } else if (game.last_hit.success == 1) {
+          sound.hitBlast.play();
+        } else {
+          sound.missedHit.play();
+        }
+      }
     }
   });
 
@@ -457,13 +473,6 @@ jQuery(function () {
             thisIsMyTurn = true;
           } else {
             hitsHistory.push(hit);
-            if (result.sunk) {
-              sound.shipDestroyed.play();
-            } else if (result.success) {
-              sound.hitBlast.play();
-            } else {
-              sound.missedHit.play();
-            }
           }
         });
       }

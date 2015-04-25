@@ -14,11 +14,6 @@ class Hit extends Base
         return $this->data['y'];
     }
 
-    public function isSuccess()
-    {
-        return !empty($this->data['success']);
-    }
-
     public function getUserId()
     {
         return $this->data['user_id'];
@@ -44,8 +39,23 @@ class Hit extends Base
         $this->data['game_id'] = $gameId;
     }
 
+    public function isSuccess()
+    {
+        return !empty($this->data['success']);
+    }
+
     public function setSuccess($success)
     {
         $this->data['success'] = (bool) $success;
+    }
+
+    public function hasDestroyed()
+    {
+        return !empty($this->data['destroyed']);
+    }
+
+    public function setDestroyed($destroyed)
+    {
+        $this->data['destroyed'] = (bool) $destroyed;
     }
 }
