@@ -9,7 +9,7 @@ jQuery(function () {
   Battleship.registerAction = function registerAction(action) {
     Battleship.actions.push(action);
   };
-
+  //verifie que l'etat du jeu a change
   function stateChanged(previous, current) {
     for (var property in current) {
       if (current.hasOwnProperty(property) && typeof current[property] !== 'object') {
@@ -20,7 +20,7 @@ jQuery(function () {
     }
     return false;
   }
-
+  // polling
   Battleship.run = function run() {
     Battleship.api.fetchState(function (game) {
       if (stateChanged(Battleship.currentState, game)) {
@@ -34,7 +34,7 @@ jQuery(function () {
       setTimeout(Battleship.run, Battleship.pollInterval);
     });
   };
-
+  //fait le changement d'etat
   Battleship.handleStateChange = function handleStateChange() {
     console.log('state changed: ', Battleship.previousState, '→', Battleship.currentState);
     Battleship.actions.forEach(function (action) {

@@ -1,12 +1,15 @@
 jQuery(function () {
   'use strict';
   $('body').on('contextmenu', 'canvas', function (){ return false; }); // desactive le clic droit sur le canvas
+  /* DEFINITION DES VARIABLES */
+  //definition des son de jeu
   var sound = {
     missedHit: document.getElementById('missed-hit-sound'),
     hitBlast: document.getElementById('hit-blast-sound'),
     shipDestroyed: document.getElementById('ship-destroyed-sound'),
     opponentDestroyed: document.getElementById('opponent-destroyed-sound')
   };
+  //recuperation des contextes pour les canvas Player et Enemy
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
   var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
   //hauteur et largeur de la grille
@@ -16,7 +19,7 @@ jQuery(function () {
   var p = 10;
   //taille d'une case
   var squareSize = 40;
-  //taille du canvas du player
+  //taille du canvas du player (on ajoute la partie ou les bateaux sont dessines)
   var cw = gridWidth + (p*2) + 1;
   var ch = gridHeight + (p*2) + 201;
   var draggingBoat = null;
@@ -80,7 +83,9 @@ jQuery(function () {
       orientation: "horizontal"
     }
   ];
-
+/************************************************/
+  // permet de recuperer le placement des bateaux quand on recharge la page
+  // apres avoir valide le positionnement
   Battleship.registerAction({
     previousGameStates: [null],
     currentGameStates: '*',
@@ -96,7 +101,7 @@ jQuery(function () {
       drawBoats();
     }
   });
-
+  //permet de recuperer l'etat du jeu et de savoir si le joueur est pret
   Battleship.registerAction({
     previousGameStates: '*',
     currentGameStates: '*',
@@ -104,14 +109,9 @@ jQuery(function () {
       gameState = game.state;
       playerReady = game.player_is_ready;
     }
-  });
-
-  function getMatchingBoat(ship) {
-    return boats.filter(function (boat) {
-      return boat.size == ship.size && !boat.id;
-    })[0];
-  }
-
+  });  
+  //permet de mettre de a jour le nom de l'ennemi quand celui rejoind la partie
+  // et d'afficher le message en consequence
   Battleship.registerAction({
     previousGameStates: [null, Battleship.gameState.waiting],
     currentGameStates: [Battleship.gameState.placing, Battleship.gameState.player1_ready, Battleship.gameState.player2_ready, Battleship.gameState.playing, Battleship.gameState.finished],
@@ -120,7 +120,8 @@ jQuery(function () {
       $('#game').removeClass('no-opponent').addClass('has-opponent');
     }
   });
-
+  //"disable" le canvas Enemy quand le jeu et fini
+  //et d'afficher un message avec le nom du gagnant
   Battleship.registerAction({
     previousGameStates: '*',
     currentGameStates: [Battleship.gameState.finished],
@@ -129,7 +130,8 @@ jQuery(function () {
       $( "#alert-msg" ).html( "<div class=\"alert-box success\">The game is finished, congrats to <strong>" + game.winner + "</strong>!</div>" );
     }
   });
-
+  //permet de jouer les sons des hits, des hits manques
+  //et des bateaux coules pendant le jeu
   Battleship.registerAction({
     previousGameStates: [Battleship.gameState.playing],
     currentGameStates: [Battleship.gameState.playing],
@@ -145,7 +147,8 @@ jQuery(function () {
       }
     }
   });
-
+  //permet de jouer un son quand le dernier hit detruit le dernier bateau
+  //de la grille
   Battleship.registerAction({
     previousGameStates: [Battleship.gameState.playing],
     currentGameStates: [Battleship.gameState.finished],
@@ -153,7 +156,7 @@ jQuery(function () {
       sound.opponentDestroyed.play();
     }
   });
-
+  //permet de garder les grilles a jour quand on recharge la page
   Battleship.registerAction({
     previousGameStates: '*',
     currentGameStates: [Battleship.gameState.playing, Battleship.gameState.finished],
@@ -189,7 +192,12 @@ jQuery(function () {
   });
 
   Battleship.run();
-
+  //permet de faire la correspondance entre les bateaux et les "ships" envoye par le serveur
+  function getMatchingBoat(ship) {
+    return boats.filter(function (boat) {
+      return boat.size == ship.size && !boat.id;
+    })[0];
+  }
   /* initialise le canvas de la grille du joueur */
   function initPlayerGrid() {
     $('#cvsPlayer').attr("width", cw);
@@ -274,7 +282,7 @@ jQuery(function () {
     context.stroke()
     context.restore();
   }
-
+  //met en evidence une case au passage de la souris sur la grille de l'ennemie
   function highlightSquare(squarePos) {
     ctxEnemy.save();
     ctxEnemy.fillStyle = "rgba(255, 208, 0, 0.6)";
@@ -418,7 +426,6 @@ jQuery(function () {
   });
   //relache le bateau
   $('#cvsPlayer').mouseup(releaseBoat);
-
 
   //appel a chaque fois que la souris bouge
   $('#cvsEnemy').mousemove(function (e) {

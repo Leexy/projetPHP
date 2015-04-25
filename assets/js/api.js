@@ -1,6 +1,6 @@
 jQuery(function () {
   'use strict';
-
+/* Requetes Ajax */
   var api = window.Battleship.api = {};
 
   //recupere un etat
@@ -40,7 +40,7 @@ jQuery(function () {
       api.placeShip(ship, function () { done() });
     }, callback);
   };
-
+  //envoi une requete pour dire que le joueur est pret
   api.ready = function postReady(callback) {
     jQuery.ajax({
       contentType: 'application/json',
