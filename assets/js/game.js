@@ -179,7 +179,7 @@ jQuery(function () {
   /* Dessine la grille */
   function drawGrid(ctx,width,height,p) {
     // clear le canvas
-    ctx.clearRect(0, 0, width, height);
+    ctx.clearRect(0, 0, width + p * 2, height + p * 2);
     var arrayCoordX = ["a","b","c","d","e","f","g","h","i","j"]
     var arrayCoordY = ["1","2","3","4","5","6","7","8","9","10"]
     var i=0;
@@ -245,6 +245,13 @@ jQuery(function () {
     context.restore();
   }
 
+  function highlightSquare(squarePos) {
+    ctxEnemy.save();
+    ctxEnemy.fillStyle = "rgba(255, 208, 0, 0.6)";
+    ctxEnemy.fillRect(gridToCanvas(squarePos.x), gridToCanvas(squarePos.y), squareSize - 1, squareSize - 1);
+    ctxEnemy.restore();
+  }
+
   //fonction qui renvoie le bateau clique
   function getPointedBoat(x,y){
     var selectedBoat;
@@ -279,7 +286,7 @@ jQuery(function () {
   }
   //converti les pixels en numeros de case
   function canvasToGrid(canvasPos) {
-    return Math.ceil(canvasPos / squareSize);
+    return Math.ceil((canvasPos - p) / squareSize);
   }
   //transforme les bateaux en "ship" pour correspondre au modele serveur
   function addShipDataToBoat(boat){
@@ -381,6 +388,28 @@ jQuery(function () {
   });
   //relache le bateau
   $('#cvsPlayer').mouseup(releaseBoat);
+
+
+  //appel a chaque fois que la souris bouge
+  $('#cvsEnemy').mousemove(function (e) {
+    if (gameState === Battleship.gameState.playing) {
+      // met en avant la case survolee
+      var cvsPlayerOffset = $(e.target).offset();
+      var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
+      var y = e.offsetY === undefined ? e.pageY-cvsPlayerOffset.top : e.offsetY;
+      var squarePos = {
+        x: canvasToGrid(x),
+        y: canvasToGrid(y)
+      };
+      if (squarePos.x < 1 || squarePos.x > 10 || squarePos.y < 1 || squarePos.y > 10) {
+        return;
+      }
+      drawGrid(ctxEnemy,gridWidth,gridHeight,p);
+      highlightSquare(squarePos);
+      drawBoats();
+      drawHits();
+    }
+  });
 
   //appel au clic gauche : lancement d'un hit
   $('#cvsEnemy').mouseup(function (e) {
