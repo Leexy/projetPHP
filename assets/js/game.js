@@ -15,6 +15,7 @@ jQuery(function () {
   var ch = gridHeight + (p*2) + 201;
   var draggingBoat = null;
   var thisIsMyTurn = false;
+  var gameState;
   var hitsHistory = [];
   var boatNames = {
     2: "submarine",
@@ -89,6 +90,14 @@ jQuery(function () {
     }
   });
 
+  Battleship.registerAction({
+    previousGameStates: '*',
+    currentGameStates: '*',
+    proceed: function (game) {
+      gameState = game.state;
+    }
+  });
+
   function getMatchingBoat(ship) {
     return boats.filter(function (boat) {
       return boat.size == ship.size && !boat.id;
@@ -106,14 +115,26 @@ jQuery(function () {
 
   Battleship.registerAction({
     previousGameStates: '*',
+    currentGameStates: [Battleship.gameState.finished],
+    proceed: function (game) {
+      $('#cvsEnemy').addClass('disableCanvas');
+      $('#cvsPlayer').addClass('disableCanvas');
+      $( "#alert-msg" ).html( "<div class=\"alert-box success\">The game is finished ! </div>" );
+    }
+  });
+
+  Battleship.registerAction({
+    previousGameStates: '*',
     currentGameStates: [Battleship.gameState.playing, Battleship.gameState.finished],
     proceed: function (game) {
       $('#placing-instructions, #btnReady').remove();
       thisIsMyTurn = game.play;
-      if (thisIsMyTurn) {
-        $( "#alert-msg" ).html( "<div class=\"alert-box warning\">This is your turn.</div>" );
-      } else {
-        $( "#alert-msg" ).html( "<div class=\"alert-box notice\">Your opponent is playing.</div>" );
+      if(Battleship.gameState.finished != game.state){
+        if (thisIsMyTurn) {
+          $( "#alert-msg" ).html( "<div class=\"alert-box warning\">This is your turn.</div>" );
+        } else {
+          $( "#alert-msg" ).html( "<div class=\"alert-box notice\">Your opponent is playing.</div>" );
+        }
       }
       sunkBoats = game.sunk_ships.map(function (ship) {
         return {
@@ -155,7 +176,7 @@ jQuery(function () {
   }
   /* Dessine la grille */
   function drawGrid(ctx,width,height,p) {
-    // clear the canvas
+    // clear le canvas
     ctx.clearRect(0, 0, width, height);
     var arrayCoordX = ["a","b","c","d","e","f","g","h","i","j"]
     var arrayCoordY = ["1","2","3","4","5","6","7","8","9","10"]
@@ -199,7 +220,7 @@ jQuery(function () {
     }
     context.restore();
   }
-
+  //dessine tous les hits
   function drawHits() {
     playerHits.forEach(function (hit) {
       drawHit(hit, ctxEnemy);
@@ -208,7 +229,7 @@ jQuery(function () {
       drawHit(hit, ctxPlayer);
     });
   }
-
+  //dessine un hit
   function drawHit(hit, context) {
     var radius = 17;
     context.save();
@@ -312,6 +333,7 @@ jQuery(function () {
       $( "#alert-msg" ).html( " <div class=\"alert-box error\"><span>error: </span>You should correctly place ALL your boats ! ;).</div>" );
     }
     else{
+      $("#cvsPlayer").addClass("disableCanvas");
       $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span>You have place all your boats ! Wait till your opponent is ready now ;).</div>" );
       $("#btnReady").attr('disabled',true);
       boats.forEach(addShipDataToBoat);
@@ -363,29 +385,31 @@ jQuery(function () {
     var cvsOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.pageX-cvsOffset.left : e.offsetX;
     var y = e.offsetY === undefined ? e.pageY-cvsOffset.top : e.offsetY;
-    if( e.which == 1 ){
-      var hit = {
-        x: canvasToGrid(x),
-        y: canvasToGrid(y)
-      };
-      if (hit.x < 1 || hit.x > 10 || hit.y < 1 || hit.y > 10) {
-        console.log('Click ignored (out of grid)');
-        return;
-      }
-      if (hitsHistory.some(function (historyHit) { return hit.x === historyHit.x && hit.y === historyHit.y; })) {
-        console.log('This hit has already been sent');
-        return;
-      }
-      thisIsMyTurn = false;
-      Battleship.api.hit(hit, function (error, result) {
-        console.log('Hit:', result);
-        if (error) {
-          console.error(error);
-          thisIsMyTurn = true;
-        } else {
-          hitsHistory.push(hit);
+    if(gameState == "playing"){ // on ne peut faire des "hits" que quand on est dans l'etat "playing"
+      if( e.which == 1 ){
+        var hit = {
+          x: canvasToGrid(x),
+          y: canvasToGrid(y)
+        };
+        if (hit.x < 1 || hit.x > 10 || hit.y < 1 || hit.y > 10) {
+          console.log('Click ignored (out of grid)');
+          return;
         }
-      });
+        if (hitsHistory.some(function (historyHit) { return hit.x === historyHit.x && hit.y === historyHit.y; })) {
+          console.log('This hit has already been sent');
+          return;
+        }
+        thisIsMyTurn = false;
+        Battleship.api.hit(hit, function (error, result) {
+          console.log('Hit:', result);
+          if (error) {
+            console.error(error);
+            thisIsMyTurn = true;
+          } else {
+            hitsHistory.push(hit);
+          }
+        });
+      }
     }
   });
 });

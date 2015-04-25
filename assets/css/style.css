@@ -199,6 +199,9 @@ a:hover {
 	display: none;
 }
 
+.disableCanvas{
+	opacity: 0.5;
+}
 /* Footer */
 
 #footer {
