@@ -46,6 +46,11 @@ class Game extends Base
     return $this->data['user2_id'];
   }
 
+  public function getWinnerId()
+  {
+    return $this->data['winner_id'];
+  }
+
   public function setWinnerId($winnerId)
   {
     $this->data['winner_id'] = $winnerId;

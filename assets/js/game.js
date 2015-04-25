@@ -119,7 +119,7 @@ jQuery(function () {
     proceed: function (game) {
       $('#cvsEnemy').addClass('disableCanvas');
       $('#cvsPlayer').addClass('disableCanvas');
-      $( "#alert-msg" ).html( "<div class=\"alert-box success\">The game is finished ! </div>" );
+      $( "#alert-msg" ).html( "<div class=\"alert-box success\">The game is finished, congrats to <strong>" + game.winner + "</strong>!</div>" );
     }
   });
 

@@ -108,9 +108,10 @@ $app->post('/games/:id/ready', function ($gameId) use($app) {
 $app->get('/games/:id/state', function ($gameId) use($app) {
   $app->response->headers->set('Content-Type', 'application/json');
   $user = $app->user;
+  $userRepository = new UserRepository($app->dbh);
   $gameRepository = new GameRepository($app->dbh);
   $game = $gameRepository->fetchById($gameId);
-  $opponent = (new UserRepository($app->dbh))->fetchById($game->getOpponentIdOf($user));;
+  $opponent = $userRepository->fetchById($game->getOpponentIdOf($user));;
   if (!$game->isPlaying($user)) {
     $app->halt(403);
   }
@@ -124,11 +125,12 @@ $app->get('/games/:id/state', function ($gameId) use($app) {
     $response['player_hits'] = $hitRepository->fetchByUserInGame($user, $game);
     $response['opponent_hits'] = $hitRepository->fetchByUserInGame($opponent, $game);
   }
-  $opponent = null;
-  $opponentId = $game->getOpponentIdOf($user);
-  if($opponentId){
-    $opponent = (new UserRepository($app->dbh))->fetchById($opponentId);
+  if (!empty($opponent)) {
     $response['opponentName'] = $opponent->getDisplayName();
+  }
+  if (!empty($game->getWinnerId())) {
+    $winner = $userRepository->fetchById($game->getWinnerId());
+    $response['winner'] = $winner->getDisplayName();
   }
 
   $app->response->setBody(json_encode($response));
