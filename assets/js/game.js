@@ -391,7 +391,7 @@ jQuery(function () {
     var cvsOffset = $(e.target).offset();
     var x = e.offsetX === undefined ? e.pageX-cvsOffset.left : e.offsetX;
     var y = e.offsetY === undefined ? e.pageY-cvsOffset.top : e.offsetY;
-    if(gameState === Battleship.state.playing){ // on ne peut faire des "hits" que quand on est dans l'etat "playing"
+    if(gameState === Battleship.gameState.playing){ // on ne peut faire des "hits" que quand on est dans l'etat "playing"
       if( e.which == 1 ){
         var hit = {
           x: canvasToGrid(x),
