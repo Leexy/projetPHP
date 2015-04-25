@@ -195,20 +195,22 @@ $app->get('/user/profile', function () use($app) {
   $victoryCount = $gameRepository->getVictoryCountFor($app->user);
   $playedCount = $gameRepository->getPlayedCountFor($app->user);
   $hitsStats = $hitRepository->fetchBySuccessAndUser($app->user);
-  foreach ($hitsStats as $hits) {
-    if ($hits['success'] == '1') {
-      $successfulHitsCount = (int) $hits['count'];
-    } else {
-      $missedHitsCount = (int) $hits['count'];
+  if (!empty($hitsStats)) {
+    foreach ($hitsStats as $hits) {
+      if ($hits['success'] == '1') {
+        $successfulHitsCount = (int) $hits['count'];
+      } else {
+        $missedHitsCount = (int) $hits['count'];
+      }
     }
+    $hitsCount = $successfulHitsCount + $missedHitsCount;
+    $successfulHitsPercentage = round(($successfulHitsCount / $hitsCount) * 100, 2);
   }
-  $hitsCount = $successfulHitsCount + $missedHitsCount;
-  $successfulHitsPercentage = round(($successfulHitsCount / $hitsCount) * 100, 2);
   $app->render('user-profile.html.twig', [
     'display_name' => $app->user->getDisplayName(),
     'email' => $app->user->getEmail(),
     'victory_count' => $victoryCount,
-    'successful_hits_percentage' => $successfulHitsPercentage,
+    'successful_hits_percentage' => isset($successfulHitsPercentage) ? $successfulHitsPercentage : 0,
     'played_count' => $playedCount,
   ]);
 })->name('user.profile');
