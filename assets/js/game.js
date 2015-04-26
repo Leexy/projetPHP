@@ -402,13 +402,34 @@ jQuery(function () {
       }
     }
   }
-  //verifie que tous les bateaux ont bien une coordonnee x,y unique
-  function boatSingleCoord(boat){
+  //verifie que aucun bateau n'en croise un autre
+  function isNotCrossed(boat){
     return boats.every(function (b) {
       if(boat === b){
         return true;
       }
-      return boat.x != b.x || boat.y != b.y;
+      var boatX = boat.gridX;
+      var boatY = boat.gridY;
+      for (var boatI = 0; boatI < +boat.size; ++boatI) {
+        var bX = b.gridX;
+        var bY = b.gridY;
+        for (var bI = 0; bI < +b.size; ++bI) {
+          if (boatX === bX && boatY === bY) {
+            return false;
+          }
+          if (b.orientation === 'horizontal') {
+            ++bX;
+          } else {
+            ++bY;
+          }
+        }
+        if (boat.orientation === 'horizontal') {
+          ++boatX;
+        } else {
+          ++boatY;
+        }
+      }
+      return true;
     });
   }
   //initialise les deux grilles de jeu
@@ -417,12 +438,11 @@ jQuery(function () {
   //onclick sur le bouton Ready, verifie que tous les bateaux sont bien postionnes dans la grille grace a la fonction boatInGrid
   //et envoi de la requete au serveur
   $('#btnReady').click(function () {
-    var positionOk = boats.every(boatInGrid);
-    var boatsCoordOk = boats.every(boatSingleCoord);
-    if(!positionOk || !boatsCoordOk){
-      $( "#alert-msg" ).html( " <div class=\"alert-box error\"><span>error: </span>You should correctly place ALL your boats ! ;).</div>" );
-    }
-    else{
+    if (!boats.every(boatInGrid)) {
+      $( "#alert-msg" ).html( " <div class=\"alert-box error\"><span>error: </span>All your boats must be <strong>inside</strong> the grid! Please change their positions.</div>" );
+    } else if (!boats.every(isNotCrossed)) {
+      $( "#alert-msg" ).html( " <div class=\"alert-box error\"><span>error: </span>Your boats should <strong>not cross each others</strong>! Please change their positions.</div>" );
+    } else {
       $("#cvsPlayer").addClass("disableCanvas");
       $( "#alert-msg" ).html( "<div class=\"alert-box success\"><span>success: </span>You have place all your boats ! Wait till your opponent is ready now ;).</div>" );
       $("#btnReady").attr('disabled',true);
