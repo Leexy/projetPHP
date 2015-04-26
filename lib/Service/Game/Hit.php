@@ -79,17 +79,12 @@ class Hit
 
     protected function isOpponentDestroyed()
     {
-        $numberOfSuccessHitsToDestroy = (
-          ShipPlacing::SHIPS_OF_SIZE_2 * 2 +
-          ShipPlacing::SHIPS_OF_SIZE_3 * 3 +
-          ShipPlacing::SHIPS_OF_SIZE_4 * 4 +
-          ShipPlacing::SHIPS_OF_SIZE_5 * 5
-        );
-        return (
-          $this->hitRepository->countSuccessfulHits($this->shooter, $this->game)
-          >=
-          $numberOfSuccessHitsToDestroy
-        );
+      foreach ($this->getOpponentShips() as $opponentShip) {
+        if (!$opponentShip->isDestroyed()) {
+          return false;
+        }
+      }
+      return true;
     }
 
     /**
