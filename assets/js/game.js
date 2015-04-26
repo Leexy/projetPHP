@@ -402,6 +402,15 @@ jQuery(function () {
       }
     }
   }
+  //verifie que tous les bateaux ont bien une coordonnee x,y unique
+  function boatSingleCoord(boat){
+    return boats.every(function (b) {
+      if(boat === b){
+        return true;
+      }
+      return boat.x != b.x || boat.y != b.y;
+    });
+  }
   //initialise les deux grilles de jeu
   initEnemyGrid();
   initPlayerGrid();
@@ -409,7 +418,8 @@ jQuery(function () {
   //et envoi de la requete au serveur
   $('#btnReady').click(function () {
     var positionOk = boats.every(boatInGrid);
-    if(!positionOk){
+    var boatsCoordOk = boats.every(boatSingleCoord);
+    if(!positionOk || !boatsCoordOk){
       $( "#alert-msg" ).html( " <div class=\"alert-box error\"><span>error: </span>You should correctly place ALL your boats ! ;).</div>" );
     }
     else{
