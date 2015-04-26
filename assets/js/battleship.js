@@ -12,6 +12,11 @@ jQuery(function () {
   };
   //verifie si l'etat du jeu a change
   function stateChanged(previous, current) {
+    // TAG:STUCK Workaround for "game is stuck and I need to reload" issue
+    if (current.state === Battleship.gameState.playing) {
+      return true;
+    }
+    // ENDTAG
     for (var property in current) {
       if (current.hasOwnProperty(property) && typeof current[property] !== 'object') {
         if (current[property] !== previous[property]) {

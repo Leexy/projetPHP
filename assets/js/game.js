@@ -9,6 +9,11 @@ jQuery(function () {
     shipDestroyed: document.getElementById('ship-destroyed-sound'),
     opponentDestroyed: document.getElementById('opponent-destroyed-sound')
   };
+  function playSound(soundName) {
+    var audio = sound[soundName];
+    audio.currentTime = 0;
+    audio.play();
+  }
   var enemyCanvas = document.getElementById("cvsEnemy");
   //recuperation des contextes pour les canvas Player et Enemy
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
@@ -24,6 +29,7 @@ jQuery(function () {
   var cw = gridWidth + (p*2) + 1;
   var ch = gridHeight + (p*2) + 201;
   var draggingBoat = null;
+  var pointedSquare = null;
   var thisIsMyTurn = false;
   var gameState;
   var playerReady;
@@ -34,6 +40,7 @@ jQuery(function () {
     4: "cruiser",
     5: "battleship"
   };
+  var lastPlayedHitId;
   var playerHits = [];
   var enemyHits = [];
   var sunkBoats = [];
@@ -91,6 +98,11 @@ jQuery(function () {
     previousGameStates: [null],
     currentGameStates: '*',
     proceed: function (game) {
+      // TAG:STUCK
+      if (game.last_hit) {
+        lastPlayedHitId = game.last_hit.id;
+      }
+      // ENDTAG
       game.player_ships.forEach(function (ship) {
         var boat = getMatchingBoat(ship);
         boat.id = ship.id;
@@ -113,7 +125,7 @@ jQuery(function () {
       gameState = game.state;
       playerReady = game.player_is_ready;
     }
-  });  
+  });
   //permet de mettre de a jour le nom de l'ennemi quand celui rejoind la partie
   // et d'afficher le message en consequence
   Battleship.registerAction({
@@ -141,13 +153,21 @@ jQuery(function () {
     currentGameStates: [Battleship.gameState.playing],
     proceed: function (game) {
       if (game.last_hit) {
-        if (game.last_hit.destroyed == 1) {
-          sound.shipDestroyed.play();
-        } else if (game.last_hit.success == 1) {
-          sound.hitBlast.play();
-        } else {
-          sound.missedHit.play();
+        // TAG:STUCK
+        if (game.last_hit.id === lastPlayedHitId) {
+          return;
         }
+        // ENDTAG
+        if (game.last_hit.destroyed == 1) {
+          playSound('shipDestroyed');
+        } else if (game.last_hit.success == 1) {
+          playSound('hitBlast');
+        } else {
+          playSound('missedHit');
+        }
+        // TAG:STUCK
+        lastPlayedHitId = game.last_hit.id;
+        // ENDTAG
       }
     }
   });
@@ -157,7 +177,7 @@ jQuery(function () {
     previousGameStates: [Battleship.gameState.playing],
     currentGameStates: [Battleship.gameState.finished],
     proceed: function () {
-      sound.opponentDestroyed.play();
+      playSound('opponentDestroyed');
     }
   });
   //permet de garder les grilles a jour quand on recharge la page
@@ -243,6 +263,9 @@ jQuery(function () {
     }
     ctx.strokeStyle = "black";
     ctx.stroke();
+    if (pointedSquare && thisIsMyTurn) {
+      highlightSquare(pointedSquare);
+    }
   }
   /* dessine tous les bateaux */
   function drawBoats() {
@@ -438,7 +461,7 @@ jQuery(function () {
 
   //appel a chaque fois que la souris bouge
   $('#cvsEnemy').mousemove(function (e) {
-    if (gameState === Battleship.gameState.playing) {
+    if (gameState === Battleship.gameState.playing && thisIsMyTurn) {
       // met en avant la case survolee
       var cvsPlayerOffset = $(e.target).offset();
       var x = e.offsetX === undefined ? e.pageX-cvsPlayerOffset.left : e.offsetX;
@@ -450,8 +473,8 @@ jQuery(function () {
       if (squarePos.x < 1 || squarePos.x > 10 || squarePos.y < 1 || squarePos.y > 10) {
         return;
       }
+      pointedSquare = squarePos;
       drawGrid(ctxEnemy,gridWidth,gridHeight,p);
-      highlightSquare(squarePos);
       drawBoats();
       drawSunkBoats();
       drawHits();
@@ -489,6 +512,7 @@ jQuery(function () {
             thisIsMyTurn = true;
           } else {
             hitsHistory.push(hit);
+            pointedSquare = null;
           }
         });
       }
