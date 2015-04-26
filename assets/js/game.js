@@ -9,9 +9,10 @@ jQuery(function () {
     shipDestroyed: document.getElementById('ship-destroyed-sound'),
     opponentDestroyed: document.getElementById('opponent-destroyed-sound')
   };
+  var enemyCanvas = document.getElementById("cvsEnemy");
   //recuperation des contextes pour les canvas Player et Enemy
   var ctxPlayer = document.getElementById("cvsPlayer").getContext("2d");
-  var ctxEnemy = document.getElementById("cvsEnemy").getContext("2d");
+  var ctxEnemy = enemyCanvas.getContext("2d");
   //hauteur et largeur de la grille
   var gridWidth = 400;
   var gridHeight = 400;
@@ -167,6 +168,11 @@ jQuery(function () {
       $('#placing-instructions, #btnReady').remove();
       $('#cvsPlayer').addClass('disableCanvas');
       thisIsMyTurn = game.play;
+      if (thisIsMyTurn) {
+        enemyCanvas.classList.add('can-hit');
+      } else {
+        enemyCanvas.classList.remove('can-hit');
+      }
       if(Battleship.gameState.finished != game.state){
         if (thisIsMyTurn) {
           $( "#alert-msg" ).html( "<div class=\"alert-box warning\">This is your turn.</div>" );
